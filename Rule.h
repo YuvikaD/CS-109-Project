@@ -3,10 +3,12 @@
 #define Rule_H
 using namespace std;
 class Rule {
-	public:
-	//string title;
-	vector<string> vstring;	// data vector
+		// private data member
 	bool logop;
+	public:
+	vector<string> vstring;
+	vector<string> get_vstring();
+	bool get_logop();
 	void printRule();
 	Rule(string log);	// constructor
 	~Rule();

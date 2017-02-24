@@ -11,7 +11,7 @@ Rule::Rule(string log){// constructor
 
 ostream& operator<< (std::ostream &os, Rule* rule)
 {
-	for(string i : rule->vstring){
+	for(string i : rule->get_vstring()){
 	//for (vector<string>::iterator it = rule->vstring.begin() ; it != rule->vstring.end(); ++it){ 
 		//cout << *it << " ";
 		cout << i << " ";
@@ -19,7 +19,13 @@ ostream& operator<< (std::ostream &os, Rule* rule)
     return os;
 }
 
+vector<string> Rule::get_vstring(){
+	return vstring;
+}
 
+bool Rule::get_logop(){
+	return logop;
+}
 
 void Rule::printRule(){
 	//cout << title << ": ";

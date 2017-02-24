@@ -3,8 +3,12 @@
 using namespace std;
 Fact:: Fact(string name){	// constructor 
 	title = name;
-	std::vector<std::string> vstring;
+	vector<string> vstring;
 }	
+
+vector<string> Fact::get_vstring(){
+	return vstring;
+}
 
 void Fact::printFact(){
 	cout << title << ": ";
@@ -17,7 +21,7 @@ void Fact::printFact(){
 
 std::ostream& operator<< (std::ostream &os, Fact* fact)
 {
-	for (vector<string>::iterator it = fact->vstring.begin() ; it != fact->vstring.end(); ++it){ 
+	for (vector<string>::iterator it = fact->get_vstring().begin() ; it != fact->get_vstring().end(); ++it){ 
 		cout << *it << " ";
 	}
     return os;

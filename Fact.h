@@ -1,15 +1,19 @@
 #include "common.h"
 #ifndef Fact_H
 #define Fact_H
+using namespace std;
 class Fact {
+	string title;	
+		// private data member
 	public:
-	std::string title;
-	std::vector<std::string> vstring;
+	vector<string> vstring;
+	vector<string> get_vstring();
+	
 	
 	void printFact();
-	friend std::ostream& operator<<(std::ostream &os,Fact * fact);
+	friend ostream& operator<<(ostream &os,Fact * fact);
 	
-	Fact(std::string name);
+	Fact(string name);
 	~Fact();
 };
 #endif
