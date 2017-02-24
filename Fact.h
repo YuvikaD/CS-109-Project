@@ -7,9 +7,8 @@ class Fact {
 		// private data member
 	public:
 	vector<string> vstring;
+	
 	vector<string> get_vstring();
-	
-	
 	void printFact();
 	friend ostream& operator<<(ostream &os,Fact * fact);
 	

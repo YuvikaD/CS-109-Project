@@ -6,8 +6,8 @@ class Rule {
 		// private data member
 	bool logop;
 	public:
-	vector<string> vstring;
-	vector<string> get_vstring();
+	vector<vector<string>> paramVector(10);
+	//vector<string> get_vstring();
 	bool get_logop();
 	void printRule();
 	Rule(string log);	// constructor
