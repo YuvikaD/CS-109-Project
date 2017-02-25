@@ -8,11 +8,14 @@ int main(){
 	vector<Fact> vFact; // use map instead? map of vectors that hold objects, multiple mother objects will go into one vector.
 	string line;		// empty string to load the input file's lines into
 	string leftHandSide;
+	string rightHandSide;
+	string predName;
 	string separator;
 	string logop;	
 	ifstream readFile("input.txt");	// open the input file
 	string name;		// the name of the Fact or Rule, like "Father"
 	string data;		// the params of the Fact, like "Allen"
+	string preds;
 	vector<string> predicates; 
 	while(getline(readFile,line)){	// read from input file, put contents into 'line' string
 		stringstream iss(line);		// put contents of line into a ss object
@@ -22,19 +25,24 @@ int main(){
 		stringstream iss3(leftHandSide);
 		
 		if(separator == ":-"){	// Rule
-			/*getline(iss2,name,':');	
+			getline(iss2,name,':');	
 			getline(iss,logop,' ');	// get logop
 			Rule * r = new Rule(logop);
 			Rule_map[name] = r;
-			while(getline(iss,data,' ')){ // add contents to the Fact object's vector, separated by ','
+			while(getline(iss,data,' ')){
 				stringstream iss4(data);
-				getline(iss4,SOMETHING)
-			
-				predicates.push_back(data);
-				//Rule_map[name]->vstring.push_back(data);
-				Rule_map[name]->paramVector.push_back(predicates);
-				
-			}*/
+				i++;
+				getline(iss4,predName,'(');
+				vector<string> first_vector;
+				first_vector.push_back(predName);
+				(getline(iss4,rightHandSide,')'));
+				stringstream iss5(rightHandSide);
+				while(getline(iss5,preds,',')){
+					first_vector.push_back(preds);
+				}
+				r->paramVector.push_back(first_vector);
+			}
+			cout<< i << endl;
 		} else {	// Fact
 			getline(iss3,name,'(');	
 			Fact * f = new Fact(name);		// make a fact object, it's parameter is what we read in, ex: "Father"
@@ -45,48 +53,12 @@ int main(){
 			vFact.push_back(*f);
 		}
 	}
+	// print out facts and rules for debugging
 	for(Fact i: vFact){
 		i.printFact();
 		}
 
-	/*for(map<string,Rule*>::iterator it = Rule_map.begin(); it != Rule_map.end(); ++it) {
+	for(map<string,Rule*>::iterator it = Rule_map.begin(); it != Rule_map.end(); ++it) {
 		cout << " " << it->first << ": " << it->second->get_logop() << " " << it->second << endl;
-    }	*/
-	
-	Rule * r = new Rule("OR");
-	Rule_map["Parent"] = r;
-	vector<string> v;
-	v.push_back("Father");
-	v.push_back("X");
-	v.push_back("Y");
-	Rule_map["Parent"]->paramVector.push_back(v);
-	vector<string> v3;
-	v3.push_back("Mother");
-	v3.push_back("X");
-	v3.push_back("Y");
-	Rule_map["Parent"]->paramVector.push_back(v3);
-	for(vector<string> i : r->paramVector){
-		for(string s : i){
-			cout << s << " ";
-		}
-	}
-	cout << endl;
-	Rule * r2 = new Rule("AND");
-	Rule_map["Grandfather"] = r2;
-	vector<string> v2;
-	v2.push_back("Father");
-	v2.push_back("X");
-	v2.push_back("Z");
-	Rule_map["Grandfather"]->paramVector.push_back(v2);
-	vector<string> v4;
-	v4.push_back("Parent");
-	v4.push_back("Z");
-	v4.push_back("Y");
-	Rule_map["Grandfather"]->paramVector.push_back(v4);
-	for(vector<string> i : r2->paramVector){
-		for(string s : i){
-			cout << s << " ";
-		}
-	}
-	cout << endl;
+    }	
 }
