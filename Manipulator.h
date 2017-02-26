@@ -23,6 +23,7 @@ class Manipulator {
 	public:
 	map<string,Fact*> Fact_map;
 	map<string,Rule*> Rule_map;
+	void drop(string k);
 	void dumpFacts(ostream &os);
 	void dumpRules(ostream &os);
 	void dump();
