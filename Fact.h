@@ -10,6 +10,7 @@ class Fact {
 	
 	vector<string> get_vstring();
 	void printFact();
+	void query(string s);
 	friend ostream& operator<<(ostream &os,Fact * fact);
 	
 	Fact(string name);
