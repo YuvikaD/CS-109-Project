@@ -3,7 +3,6 @@
 #define Rule_H
 using namespace std;
 class Rule {
-		// private data member
 	bool logop;
 	public:
 	vector<vector<string>> paramVector;
