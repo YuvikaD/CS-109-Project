@@ -10,21 +10,25 @@ vector<string> Fact::get_vstring(){
 	return vstring;
 }
 
+void Fact::printFact(){
+	for (vector<string>::iterator it = vstring.begin() ; it != vstring.end(); ++it){ 
+		cout << *it << " ";
+	}
+	cout << endl;
+}
+
 ostream& operator<< (std::ostream &os, Fact* fact)
 {
-	os << fact->title << ": ";
 	for(string i : fact->vstring){
-		if(!i.compare("|")){
-			os << endl << fact->title << ": ";
-		} else	os << i << " ";
+			cout << i << " ";
 	}
-	os << endl;
     return os;
 }
 
 void query(map<string,Fact*> fmap,string s){
 	if(fmap.count(s) == 1){
-		cout << s << ": " << fmap[s] << endl;
+		cout << s << ": " << endl
+		<< fmap[s] << endl;
 	}
 	else {
 		cout << "The fact named " << s << " is not in here" << endl;
