@@ -2,7 +2,16 @@
 #include "Manipulator.h"
 using namespace std;
 Manipulator:: Manipulator(){}	// constructor
-Manipulator::~Manipulator(){}	// constructor 
+Manipulator::~Manipulator(){}	// destructor 
+
+void Manipulator::drop(string k){
+	string name;
+	stringstream ss(k);
+	getline(ss,name,'(');//get name
+	Fact_map.erase(name);
+	Rule_map.erase(name);
+	cout <<'dropped' << endl;		
+}
 
 void Manipulator::dumpFacts(ostream &os){
 for(auto it = Fact_map.begin(); it != Fact_map.end(); ++it) {
