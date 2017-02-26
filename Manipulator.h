@@ -26,7 +26,7 @@ class Manipulator {
 	void dumpFacts(ostream &os);
 	void dumpRules(ostream &os);
 	void dump();
-	void load();
+	void load(string filename);
 	Manipulator();
 	~Manipulator();
 };
