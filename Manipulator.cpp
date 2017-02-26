@@ -23,8 +23,8 @@ void Manipulator::dump(){
 	dumpFacts(fout);
 	dumpRules(fout);
 }	
-void Manipulator::load(){
-ifstream readFile("input.txt");
+void Manipulator::load(string filename){
+ifstream readFile(filename);
 while(getline(readFile,line)){	// read from input file, put contents into 'line' string
 		stringstream iss(line);		// put contents of line into a ss object
 		getline(iss,leftHandSide,')');	// read from ss object, put contents into 'leftHandSide' string until ')' char is read
