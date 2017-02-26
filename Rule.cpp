@@ -1,4 +1,5 @@
 #include "common.h"
+#include "common.h"
 #include "Rule.h"
 using namespace std;
 Rule::Rule(string log){// constructor 
@@ -28,7 +29,7 @@ void Rquery(map<string,Rule*> rmap,string s){
 	}
 }
 
-void Rule::check(string x, string y){
+void Rule::check(map<string,Fact*> fmap, string x, string y){
 		//parent is the rule
 		string X = x;
 		string Y = y;
@@ -88,28 +89,58 @@ void Rule::check(string x, string y){
 		int rounds = 0;
 		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
 			rounds++;
+			cout<<rounds<<", "<<RuleVal<<", "<< i << ", "<<factNames.size()<<endl;
 			if(i == 0){
+				cout<<"i == 0"<<endl;
 				RuleVal = atoi(factNames[0].c_str());
 				//cout << RuleVal << " ";						//RuleVal == 3
 				//cout << "int "; 
 				numOrString = 1;
-			} else if(rounds <= RuleVal+1) {
+			} else if(rounds <= RuleVal+2) {
 					if (numOrString == 0){ // if its a number
+						cout<<"numOrString == 0"<<endl;
 						value = atoi(factNames[i].c_str());	// value == 2
+						cout<<"Value: " << value<< endl;
 						//cout << "VALUE: " <<value << " ";
 						//cout << "int "; 
 						numOrString = 1;
-						if(FactsNum == 0){FactsNum = value;}
+						FactsNum = value;
 					} else  if (numOrString == 1) {				// if its a name
+						cout<<"numOrString == 1"<<endl;
 						//cout << factNames[i] << " ";
 						//cout << "string ";
+						cout << "i: "<< i << endl;
 						FactInQ = factNames[i];				// FactInQ == Father
-						numOrString = 0;
 						
+						cout << "FactInQ: "<<FactInQ<< endl;
+						numOrString = 0;
 					}
 			} else {
 				cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
-				
+				bool going = true;
+				while(going){
+					for(int it = 0; it<RuleVal+FactsNum; it++){
+						if(variables[it] != variables[it+RuleVal]){
+							cout<< "not a match"<<endl;
+							going = false;
+							break;
+						}
+						
+						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){
+							if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
+								cout<< x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+								going = false;
+								return;
+							}
+						}
+						cout<<"not found"<<endl;
+						rounds = -1;
+						FactsNum = 0;
+						numOrString = 1;
+						
+					}
+					going = false;
+				}
 				/*if in variables[i<RuleVal]
 					matches variables[i = Ruleval -> i < ruleVal+factsNum]
 						in FactInQ if i = x and i+1 = y
@@ -135,4 +166,4 @@ bool Rule::get_logop(){
 	return logop;
 }
 
-Rule::~Rule(){}	//  destructorr
+Rule::~Rule(){}	//  destructor
