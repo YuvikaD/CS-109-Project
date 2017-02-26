@@ -1,0 +1,11 @@
+FACT Father(Allen,Margret,Darcie)
+FACT Mother(Margret,Bob)
+FACT Mother(Marcie,Ryan)
+FACT Father(Allen,Darcie)
+FACT Father(Joe, Smoe)
+
+RULE Parent($X,$Y):- OR Father($X,$Y) Mother($X,$Y)
+RULE GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)
+Parent($X,$Y):- OR Father($X,$Y) Mother($X,$Y)
+GrandFather($X,$Y):- AND Father($X,$Z) Parent($Z,$Y)
+GrandMother($X,$Y):- AND Mother($X,$Z) Father($Z,$Y)
