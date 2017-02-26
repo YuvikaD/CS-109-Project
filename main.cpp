@@ -11,20 +11,20 @@ int main(){
 	//M.dump();
 	//query(M.Fact_map,"Father");
 	//query(M.Fact_map,"Mother");
-	
+    while(true){
  	string str;
 	string command;
-	string rest;
+	string k;
     
 	cout << "Type a command to begin: " <<endl;
 	
     	getline(cin, str); //get input and store in str
     	stringstream iss(str);//create ss object
 	getline(iss, command, ' ');//parse first input for command
-	string k = getline(iss, rest);//parses rest of string and stores in rest
+	getline(iss, k);//parses rest of string and stores in rest
 	ofstream fstor;//create output file
 	fstor.open("write.txt");//open file
-	string s = "write.txt"
+	string s = "write.txt";
 	if(command == "RULE"){	
 		std::cout << "Rule" << k << endl;
 			fstor << k;//puts rest in file
@@ -35,9 +35,9 @@ int main(){
 			fstor << k;
 			M.load(s);
 		}		
-		else if(command == "LOAD"){cout << "load"; M.load(k);}
+		else if(command == "LOAD"){cout << "load" << endl; M.load(k);}
 		else if(command == "DROP"){
-			cout << "drop";
+			cout << "drop" <<endl;
 		/*	if()
 				Fact_Map.find(name)->
 				else if ()
@@ -47,8 +47,11 @@ int main(){
 			Fact_map.find(name)->second->vstring.push_back(data);*/
 		}
 		
-		else if(command == "INFERENCE"){cout << "issuing query";}
-		else if(command == "DUMP"){M.dump();cout << "~KB and RB dumped~";}
-		else {cout << "command not found";}
+		else if(command == "INFERENCE"){cout << "issuing query" <<endl;}
+		else if(command == "DUMP"){M.dump(); cout << "~KB and RB dumped~" <<endl;}
+	    	else if(command =='exit'){break;}
+		else {cout << "command not found" <,endl;}
+    }
 	return 0;
+	
 }
