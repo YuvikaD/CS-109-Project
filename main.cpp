@@ -5,15 +5,10 @@
 using namespace std;
 int main(){
 	Manipulator M;
+	// load facts and rules from file "input.txt"
 	M.load();
-	// print out facts and rules for debugging
-	dumpFacts(M);
-	//dumpRules(M);
-	for(map<string,Rule*>::iterator it = M.Rule_map.begin(); it != M.Rule_map.end(); ++it) {
-		cout << " " 
-		<< it->second->get_logop() << " " << it->second << endl;
-    }
-
+	// dump facts and rules to   file "output.txt"
+	M.dump();
 	//query(M.Fact_map,"Father");
 	//query(M.Fact_map,"Mother");
 	
