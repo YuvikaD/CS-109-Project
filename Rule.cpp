@@ -81,18 +81,43 @@ void Rule::check(string x, string y){
 		bool numOrString = 0; // 0 is num
 		int value;
 		//char* str;
-		cout << "String or Int?" << endl;
-		for(string i:factNames){ // for each: 3 Father 2 Mother 2
-			if (numOrString == 0){ // if its a number
-				value = atoi(i.c_str());
-				cout << value << " ";
-				cout << "int "; 
+		// cout << "String or Int?" << endl;
+		int RuleVal = 0;
+		string FactInQ = "";
+		int FactsNum = 0;
+		int rounds = 0;
+		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
+			rounds++;
+			if(i == 0){
+				RuleVal = atoi(factNames[0].c_str());
+				//cout << RuleVal << " ";						//RuleVal == 3
+				//cout << "int "; 
 				numOrString = 1;
-			} else {				// if its a name
-				cout << i << " ";
-				cout << "string ";
-				numOrString = 0;
+			} else if(rounds <= RuleVal+1) {
+					if (numOrString == 0){ // if its a number
+						value = atoi(factNames[i].c_str());	// value == 2
+						//cout << "VALUE: " <<value << " ";
+						//cout << "int "; 
+						numOrString = 1;
+						if(FactsNum == 0){FactsNum = value;}
+					} else  if (numOrString == 1) {				// if its a name
+						//cout << factNames[i] << " ";
+						//cout << "string ";
+						FactInQ = factNames[i];				// FactInQ == Father
+						numOrString = 0;
+						
+					}
+			} else {
+				cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+				
+				/*if in variables[i<RuleVal]
+					matches variables[i = Ruleval -> i < ruleVal+factsNum]
+						in FactInQ if i = x and i+1 = y
+						found
+				*/
 			}
+			
+			
 		}
 		cout << endl;
 		
@@ -110,4 +135,4 @@ bool Rule::get_logop(){
 	return logop;
 }
 
-Rule::~Rule(){}	//  destructor
+Rule::~Rule(){}	//  destructorr
