@@ -13,11 +13,10 @@ int main(){
 
 	string str;
 	string command;
+	string rest;
 	string k;
-	stringstream iss(str);//create ss object
+	string s;
 	ofstream fstor;//create output file
-	fstor.open("write.txt");//open file
-	string s = "write.txt";
 	bool done = false;
 	
 	while(!done){
@@ -25,17 +24,22 @@ int main(){
 		getline(cin, str);
 		stringstream iss(str);//create ss object
 		getline(iss, command, ' ');//parse first input for command
-		getline(iss, k);//parses rest of string and stores in k
+		getline(iss, k);//parses rest of string and stores in rest
 		char c = str[2];
 		switch(c){
 		case 'L':	// if(command == "RULE")
 				cout << "Rule" << k << endl;
+				fstor.open("write.txt");
+				s = "write.txt";
 				fstor << k;//puts rest in file
 				M.load(s);//calls load to check if R or F and puts data where it should go
 			break;
 		case 'C':	// if(command == "FACT")
 				std::cout << "Fact " << k << endl;
+				fstor.open("write.txt");
+				s = "write.txt";
 				fstor << k;
+				fstor.close();
 				M.load(s);
 			break;
 		case 'A':	// if(command == "LOAD")
@@ -59,6 +63,8 @@ int main(){
 				cout << "command not found" << endl;
 			break;
 		}
+	//fstor.close();
 	}
+	
 return 0;
 }
