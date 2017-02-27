@@ -76,31 +76,31 @@ void Rule::check(map<string,Fact*> fmap, string x, string y){
 			cout << i << " ";
 		}
 		cout << endl;
-		bool numOrString = 0; // 0 is num
+		bool numOrString = 0;
 		int value;
-		//char* str;
-		// cout << "String or Int?" << endl;
 		int RuleVal = 0;
 		string FactInQ = "";
 		int FactsNum = 1;
 		int rounds = 0;
+		bool ready = false;
 		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
 			rounds++;
 			if(i == 0){
 				RuleVal = atoi(factNames[0].c_str());
 				numOrString = 1;
-			} else if(rounds+1 <= RuleVal+FactsNum) {
+			} else if(!ready) { 
 					if (numOrString == 0){ 					// if its a number
 						value = atoi(factNames[i].c_str());
 						numOrString = 1;
 						FactsNum = value;
+						ready = true;
 					} else  if (numOrString == 1) {				// if its a name
 						FactInQ = factNames[i];
 						//cout << "FactInQ: "<<FactInQ<< endl;
-						//FactsNum = value;
+						FactsNum = value;
 						numOrString = 0;
 					}
-			} else {
+			}  if (ready){ // when you have a fact type and it's param #
 				cout<<"-----starting "<< FactInQ <<" fact search-------"<<endl;
 				cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
 				bool going = true;
@@ -125,6 +125,7 @@ void Rule::check(map<string,Fact*> fmap, string x, string y){
 					numOrString = 1;
 					going = false;
 				}
+				ready = false;
 			}
 		}
 		cout << endl;
