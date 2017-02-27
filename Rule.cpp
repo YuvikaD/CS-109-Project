@@ -66,12 +66,12 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 			}
 		}
 	}
-	cout << "variables array: ";
+	cout << "variables vector: ";
 	for(auto i : variables){
 		cout << i << " ";
 	}
 	cout << endl;
-	cout << "factNames array: ";
+	cout << "factNames vector: ";
 	for(auto i : factNames){
 		cout << i << " ";
 	}
@@ -95,38 +95,37 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 				ready = true;
 			} 
 		}  if (ready){ // when you have a fact type and it's param #
-			cout<<"starting "<< FactInQ <<" fact search"<<endl;
-				if (fmap.count(FactInQ) == 1){
-					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
-					bool going = true;
-					while(going){
-						for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
-								if(variables[it] != variables[it+RuleVal]){
-									cout<< "variables don't match"<<endl;
-									going = false;
-									break;
-								} // if variables match:
-								for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
-									if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
-										cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
-										cout<<"ending "<< FactInQ <<" fact search"<<endl;
-										return;
-									}
-								}
-							
-						}
-						// if its not found:
-						cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ<<endl;
-						cout<<"ending "<< FactInQ <<" fact search"<<endl;
-						FactsNum = 0; // resets these for the next Fact Type
-						numOrString = 1;
+			cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+			if (fmap.count(FactInQ) == 1){
+				// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+				bool going = true;
+				while(going){
+					for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
+						if(variables[it] != variables[it+RuleVal]){
+							cout<< "variables don't match"<<endl;
 						going = false;
+							break;
+						} // if variables match:
+						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
+							if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
+								cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+								//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+								return;
+							}
+						}
 					}
-				} else if (rmap.count(FactInQ) == 1){ // if its another rule
-					rmap[FactInQ]->check(rmap,fmap, X, Y);
-				}
+						// if its not found:
+						//cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ<<endl;
+						//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+					FactsNum = 0; // resets these for the next Fact Type
+					numOrString = 1;
+					going = false;
+					}
+			} else if (rmap.count(FactInQ) == 1){ // if its another rule
+				rmap[FactInQ]->check(rmap,fmap, X, Y);
 			}
-			ready = false;
+		}
+		ready = false;
 	}
 	cout << endl;
 }
