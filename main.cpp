@@ -30,7 +30,7 @@ int main(){
 		else if(command == "FACT"){fstor << k; M.load(s); cout << "Fact" << k << endl;}		
 		else if(command == "LOAD"){cout << "load" << endl; M.load(k);}
 		else if(command == "DROP"){M.drop(k); cout << "dropped" <<endl;}
-		else if(command == "INFERENCE"){cout << "issuing query" <<endl;}
+		else if(command == "INFERENCE"){cout << "issuing query" <<endl; M.inf();}
 		else if(command == "DUMP"){M.dump(); cout << "~KB and RB dumped~" <<endl;}
 	    	else if(command =='exit'){break;}
 		else {cout << "command not found" <<endl;}
