@@ -27,7 +27,7 @@ void Rquery(map<string,Rule*> rmap,string s){
 		cout << "The fact named " << s << " is not in here" << endl;
 	}
 }
-
+// called like: Rule_map["Parent"]->check(Rule_map,Fact_map,"Marcie","Ryan");
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string y){
 	//parent is the rule
 	string X = x;
