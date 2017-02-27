@@ -13,7 +13,6 @@ int main(){
 
 	string str;
 	string command;
-	string rest;
 	string k;
 	stringstream iss(str);//create ss object
 	ofstream fstor;//create output file
@@ -26,7 +25,7 @@ int main(){
 		getline(cin, str);
 		stringstream iss(str);//create ss object
 		getline(iss, command, ' ');//parse first input for command
-		getline(iss, k);//parses rest of string and stores in rest
+		getline(iss, k);//parses rest of string and stores in k
 		char c = str[2];
 		switch(c){
 		case 'L':	// if(command == "RULE")
