@@ -76,52 +76,47 @@ void Rule::check(map<string,Fact*> fmap, string x, string y){
 			cout << i << " ";
 		}
 		cout << endl;
-		bool numOrString = 0;
-		int value;
-		int RuleVal = 0;
-		string FactInQ = "";
-		int FactsNum = 1;
-		int rounds = 0;
-		bool ready = false;
+		bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
+		int RuleVal = 0;	// the rule's predicate #
+		string FactInQ = ""; // Fact in Question - fact we are going to look at
+		int FactsNum = 1; // the number of predicates the Fact in Question has 
+		bool ready = false; // bool for if its ready to iterate through the fact
 		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
-			rounds++;
-			if(i == 0){
-				RuleVal = atoi(factNames[0].c_str());
-				numOrString = 1;
-			} else if(!ready) { 
-					if (numOrString == 0){ 					// if its a number
-						value = atoi(factNames[i].c_str());
-						numOrString = 1;
-						FactsNum = value;
-						ready = true;
-					} else  if (numOrString == 1) {				// if its a name
-						FactInQ = factNames[i];
-						//cout << "FactInQ: "<<FactInQ<< endl;
-						FactsNum = value;
-						numOrString = 0;
-					}
+			if(i == 0){ // if its the first number in factNames
+				RuleVal = atoi(factNames[0].c_str()); // then it is the Fact's predicate amount
+				numOrString = 1; // next val will be a string
+			} else if(!ready) { // if its still not ready to iterate through the fact...
+				if (numOrString == 1) {				// if its a string
+					FactInQ = factNames[i];	// fact in question = the facts name
+					numOrString = 0; // next thing will be a number
+				} else if (numOrString == 0){ 					// if its a number
+					FactsNum= atoi(factNames[i].c_str()); // fact num = facts num of predicates
+					numOrString = 1; // next thing will be a string
+					ready = true;
+				} 
 			}  if (ready){ // when you have a fact type and it's param #
-				cout<<"-----starting "<< FactInQ <<" fact search-------"<<endl;
-				cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+				cout<<"starting "<< FactInQ <<" fact search"<<endl;
+				// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
 				bool going = true;
 				while(going){
-					for(int it = 0; it<RuleVal+FactsNum; it++){
+					for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
 						if(variables[it] != variables[it+RuleVal]){
-							cout<< "not a match"<<endl;
+							cout<< "variables don't match"<<endl;
 							going = false;
 							break;
-						}
-						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){
+						} // if variables match:
+						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
 							if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
-								cout<< x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+								cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+								cout<<"ending "<< FactInQ <<" fact search"<<endl;
 								return;
 							}
 						}
 					}
-					cout<<"not found"<<endl;
-					cout<<"---------ending "<< FactInQ <<" fact search-------"<<endl;
-					rounds = -1;
-					FactsNum = 0;
+					// if its not found:
+					cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ <<endl;
+					cout<<"ending "<< FactInQ <<" fact search"<<endl;
+					FactsNum = 0; // resets these for the next Fact Type
 					numOrString = 1;
 					going = false;
 				}
