@@ -32,6 +32,7 @@ int main(){
 				fstor.open("write.txt");
 				s = "write.txt";
 				fstor << k;//puts rest in file
+				fstor.close();
 				M.load(s);//calls load to check if R or F and puts data where it should go
 			break;
 		case 'C':	// if(command == "FACT")
