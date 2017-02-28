@@ -24,10 +24,10 @@ void Rquery(map<string,Rule*> rmap,string s){
 		cout << s << ": " << endl
 		<< rmap[s] << endl;
 	} else {
-		cout << "The fact named " << s << " is not in here" << endl;
+		cout << "The rule named " << s << " is not in here" << endl;
 	}
 }
-// called like: Rule_map["Parent"]->check(Rule_map,Fact_map,"Marcie","Ryan");
+
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string y){
 	//parent is the rule
 	string X = x;
@@ -76,6 +76,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 		cout << i << " ";
 	}
 	cout << endl;
+	// OR ------------------------------- OR-----------------------------------OR-------------------------------
 	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 	int RuleVal = 0;	// the rule's predicate #
 	string FactInQ = ""; // Fact in Question - fact we are going to look at
@@ -126,8 +127,31 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 			}
 		}
 		ready = false;
-	}
+		// END OF OR --------------------------------------------END OF OR -----------------------------------------
 	cout << endl;
+	// ------------------------------------AND -----------------------------------AND----------------------------------------
+	
+	
+	
+	/*
+	example: GrandFather
+	variables vector: $X $Y $X $Z $Z $Y
+	factNames vector: 2 Father 2 Parent 2
+	
+	check the strings in question, match them to the $Variables
+	plug them into the facts matching $Variables
+	check if any of the unassigned $Variables among the facts match
+	for the matching %Variables, check if the string values match
+	for the solo $Variables, return true if there is a fact with a value in that spot
+	if all of those are true, the checker found a result
+	
+	
+	vector rulepreds
+	for i < factnames[0]
+		rulepreds[i] = variables [i]		// copies rule stuff into a new vector <$X,$Y>
+	
+	
+    */
 }
 
 bool Rule::get_logop(){
