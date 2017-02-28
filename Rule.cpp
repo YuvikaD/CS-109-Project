@@ -76,7 +76,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 		cout << i << " ";
 	}
 	cout << endl;
-	// OR ------------------------------- OR-----------------------------------OR-------------------------------
+	
 	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 	int RuleVal = 0;	// the rule's predicate #
 	string FactInQ = ""; // Fact in Question - fact we are going to look at
@@ -95,53 +95,102 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, string x, string
 				numOrString = 1; // next thing will be a string
 				ready = true;
 			} 
-		}  if (ready){ // when you have a fact type and it's param #
-			cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
-			if (fmap.count(FactInQ) == 1){
-				// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
-				bool going = true;
-				while(going){
-					for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
-						if(variables[it] != variables[it+RuleVal]){
-							cout<< "variables don't match"<<endl;
-						going = false;
-							break;
-						} // if variables match:
-						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
-							if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
-								cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
-								//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-								return;
+			// OR ------------------------------- OR-----------------------------------OR-------------------------------
+	}
+		}  
+		if(get_logop() == 0){
+			if (ready){ // when you have a fact type and it's param #
+				cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+				if (fmap.count(FactInQ) == 1){
+					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+					bool going = true;
+					while(going){
+						for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
+							if(variables[it] != variables[it+RuleVal]){
+								cout<< "variables don't match"<<endl;
+							going = false;
+								break;
+							} // if variables match:
+							for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
+								if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){
+									cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+									//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+									return;
+								}
 							}
 						}
-					}
-						// if its not found:
-						//cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ<<endl;
-						//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-					FactsNum = 0; // resets these for the next Fact Type
-					numOrString = 1;
-					going = false;
-					}
-			} else if (rmap.count(FactInQ) == 1){ // if its another rule
-				rmap[FactInQ]->check(rmap,fmap, X, Y);
+							// if its not found:
+							//cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ<<endl;
+							//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+						FactsNum = 0; // resets these for the next Fact Type
+						numOrString = 1;
+						going = false;
+						}
+				} else if (rmap.count(FactInQ) == 1){ // if its another rule
+					rmap[FactInQ]->check(rmap,fmap, X, Y);
+				}
 			}
-		}
-		ready = false;
+			ready = false;
+	}
 		// END OF OR --------------------------------------------END OF OR -----------------------------------------
 	cout << endl;
 	// ------------------------------------AND -----------------------------------AND----------------------------------------
+	for(int i = 0; i < RuleVal; i++){ // for the rules predicates
+		for(int it = RuleVal; it<variables.size(); it++){
+			if(variables[i] == variables[it]){ // checks if the $Values match
+				if(variables[i] == "$X"){ // this will have to be changed to be the vector of names given
+					variables[it]=X;					// if they do, plug in the strings
+				}else if(variables[i] == "$Y"){
+					variables[it]=Y;
+				} 
+			}
+		}	
+	}
+	cout << "variables vector after: "<<endl;
+	for(auto i : variables){
+		cout << i << " ";
+	}
+	cout << endl;
+	/*
+	for(int i = RuleVal; i<variables.size(); i++){ // for the variables vector (iterating through)
+		for(int it = i; it < variables.size(); it++){
+			if(variables[i][0] == '$'){ // if its one of the variables
+				if(variables[i] == variables[it]){ 	// if they match ($Z and $Z)
+					variables[it].erase(0,1);
+				}
+			}
+		}
+		if(variables[i][0] == '$'){
+			variables[i].erase(0,1);
+		}
+	}
+	cout << "variables vector after: "<<endl;
+	for(auto i : variables){
+		cout << i << " ";
+	}*/
 	
 	
+	
+	// variables vector: $X, $Y, Carl, Z, Z, Ryan
 	
 	/*
+	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
+	int RuleVal = 0;	// the rule's predicate #
+	string FactInQ = ""; // Fact in Question - fact we are going to look at
+	int FactsNum = 1; // the number of predicates the Fact in Question has 
+	bool ready = false; 
+	
 	example: GrandFather
 	variables vector: $X $Y $X $Z $Z $Y
 	factNames vector: 2 Father 2 Parent 2
 	
-	check the strings in question, match them to the $Variables
-	plug them into the facts matching $Variables
-	check if any of the unassigned $Variables among the facts match
-	for the matching %Variables, check if the string values match
+	check the strings in question, match them to the $Variables ./
+	plug them into the facts matching $Variables ./
+	check if any of the unassigned $Variables among the facts match ./
+	for the matching $Variables, check if the string values match 
+		check each fact, same way as or
+		if the value of a pred begins with a $
+			
 	for the solo $Variables, return true if there is a fact with a value in that spot
 	if all of those are true, the checker found a result
 	
