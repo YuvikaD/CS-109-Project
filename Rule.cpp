@@ -40,22 +40,26 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		argVec.push_back(str);
 	}*/
 	
-	//string X = x;
-	//string Y = y;
+	string X = argVec[0];
+	string Y = argVec[1];
+	//cout << "0" << endl;
 	vector<string> variables;
 	vector<string> factNames;
+	//cout << "0.1" << endl;
 	int loops = 0;
 	int maincount = 0;
 	int count = 0; // count for dealing with rule's stuff
 	int varcounter = 0; // counter of # of facts params
 	for(vector<string> i : paramVector){ // adds vars to the var vector
+	//cout << "1" << endl;
 		maincount++;
 		loops = 0;
 		if (count == 0) {// goes through each fact
 			loops++;
 			count = 1;
-		} 
+		}
 		for(string s : i) { // in each fact, check name X Y...
+		//cout << "2" << endl;
 			loops++;
 			if (count == 1){
 				count++;
@@ -85,10 +89,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	for(auto i : factNames){
 		cout << i << " ";
 	}
-	cout << endl;
-	// OR ------------------------------- OR-----------------------------------OR-------------------------------
 	if(get_logop() == 0){
-		bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
+	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 		int RuleVal = 0;	// the rule's predicate #
 		string FactInQ = ""; // Fact in Question - fact we are going to look at
 		int FactsNum = 1; // the number of predicates the Fact in Question has 
@@ -106,61 +108,50 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 					numOrString = 1; // next thing will be a string
 					ready = true;
 				} 
-				
-		}
-		}  
-		
-			if (ready){ // when you have a fact type and it's param #
-				cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
-				if (fmap.count(FactInQ) == 1){
-					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
-					bool going = true;
-					while(going){
-						for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
-							if(variables[it] != variables[it+RuleVal]){
-								cout<< "variables don't match"<<endl;
-								going = false;
-								break;
-							} // if variables match:
+			}  if (ready){ // when you have a fact type and it's param #
+				cout<<"starting "<< FactInQ <<" fact search"<<endl;
+				// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+				bool going = true;
+				while(going){
+					for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
+						if(variables[it] != variables[it+RuleVal]){
+							cout<< "variables don't match"<<endl;
+							going = false;
+							break;
+						} // if variables match:
+						bool resultFound = true;
+						//for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
 							for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
-								bool found = true;
-								for(int argCounter = 0; argCounter < FactsNum; argCounter++){ // for each fact
-									if(fmap[FactInQ]->vstring[i] == argVec[argCounter] && argCounter+1 == FactsNum){
-										if(found){
-											cout<< "FOUND: " << argVec[argCounter] << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
-											return;
-										}
-									} else if(fmap[FactInQ]->vstring[i] != argVec[argCounter]){
-										found = false;
-										
+								for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
+									if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && (varLimit+1==RuleVal)){
+										cout<< "FOUND: " << X << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+										cout<<"ending "<< FactInQ <<" fact search"<<endl;
+										return;
+									} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit]){
+										resultFound = false;
+									} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit]){
+										i++;
 									}
 								}
-								
-								/*if(fmap[FactInQ]->vstring[i] == X && fmap[FactInQ]->vstring[i+1] == Y){ //will have to change for input vec
-									cout<< "FOUND: " << x << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
-									//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-									return;
-								}*/
+								resultFound = true;
 							}
-						}
-							// if its not found:
-							//cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ<<endl;
-							//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-						FactsNum = 0; // resets these for the next Fact Type
-						numOrString = 1;
-						going = false;
-						}
-				} else if (rmap.count(FactInQ) == 1){ // if its another rule
-					rmap[FactInQ]->check(rmap,fmap,argVec);
-				} else {
-					cout << FactInQ <<" isn't a fact"<<endl;
-					return;
+							
+						//}
+					}
+					// if its not found:
+					cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ <<endl;
+					cout<<"ending "<< FactInQ <<" fact search"<<endl;
+					FactsNum = 0; // resets these for the next Fact Type
+					numOrString = 1;
+					going = false;
 				}
+				ready = false;
 			}
-			ready = false;
+		}
 	}
-		// END OF OR --------------------------------------------END OF OR -----------------------------------------
 	cout << endl;
+	// OR ------------------------------- OR-----------------------------------OR-------------------------------
+	
 }
 	// ------------------------------------AND -----------------------------------AND----------------------------------------
 	/*if(get_logop()==1){
