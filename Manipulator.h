@@ -23,12 +23,12 @@ class Manipulator {
 	public:
 	map<string,Fact*> Fact_map;
 	map<string,Rule*> Rule_map;
-	void inf();
 	void drop(string name);
 	void dumpFacts(ostream &os);
 	void dumpRules(ostream &os);
 	void dump();
-	void load();
+	void load(string filename);
+	void inference(string filename);
 	Manipulator();
 	~Manipulator();
 };
