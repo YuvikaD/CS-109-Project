@@ -29,19 +29,7 @@ void Rquery(map<string,Rule*> rmap,string s){
 }
 
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec){
-	//parent is the rule
-	/*va_list argList;
-	va_start(argList, num);
-	vector<string> argVec;
-	string str;
-	//cout<<"here"<<endl;
-	for(int i = 1; i < num; i++){
-		str = vsscanf(va_arg(argList,string*), "%s", argList);
-		argVec.push_back(str);
-	}*/
 	
-	string X = argVec[0];
-	string Y = argVec[1];
 	//cout << "0" << endl;
 	vector<string> variables;
 	vector<string> factNames;
@@ -51,7 +39,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	int count = 0; // count for dealing with rule's stuff
 	int varcounter = 0; // counter of # of facts params
 	for(vector<string> i : paramVector){ // adds vars to the var vector
-	//cout << "1" << endl;
+		//cout << "1" << endl;
 		maincount++;
 		loops = 0;
 		if (count == 0) {// goes through each fact
@@ -90,6 +78,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		cout << i << " ";
 	}
 	cout<< endl;
+		// OR ------------------------------- OR-----------------------------------OR-------------------------------
 	if(get_logop() == 0){
 	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 		int RuleVal = 0;	// the rule's predicate #
@@ -125,7 +114,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 							for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
 								for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
 									if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && (varLimit+1==RuleVal)){
-										cout<< "FOUND: " << X << " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+										cout<< "FOUND: " << argVec[0]<< " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
 										cout<<"ending "<< FactInQ <<" fact search"<<endl;
 										return;
 									} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit]){
@@ -140,7 +129,11 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 						//}
 					}
 					// if its not found:
-					cout<< paramVector[0][0]<<" NOT FOUND: " << X << ", " << Y<< " in "<< FactInQ <<endl;
+					cout<< paramVector[0][0]<<" NOT FOUND: ";
+					for(string preds : argVec){
+						cout<<preds << ", ";
+					}
+					cout << " in "<< FactInQ <<endl;
 					cout<<"ending "<< FactInQ <<" fact search"<<endl;
 					FactsNum = 0; // resets these for the next Fact Type
 					numOrString = 1;
@@ -151,12 +144,18 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		}
 	}
 	cout << endl;
-	// OR ------------------------------- OR-----------------------------------OR-------------------------------
+
 	
 
 	// ------------------------------------AND -----------------------------------AND----------------------------------------
 	if(get_logop()==1){
-		int RuleVal = atoi(factNames[0].c_str()); 
+		recFunc(rmap,fmap,variables,factNames,argVec);
+		
+	}
+}
+
+bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> variables, vector<string> factNames, vector<string> argVec){
+	int RuleVal = atoi(factNames[0].c_str()); 
 		int FactsNum = 0;
 		//bool ready = true
 		//if(ready){
@@ -166,20 +165,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 					if(variables[i] == variables[it]){
 						variables[it] = argVec[i];
 					}
-					
-					/*if(variables[i] == variables[it]){ // checks if the $Values match
-						if(variables[i] == "$X"){ // this will have to be changed to be the vector of names given
-							variables[it]=X;					// if they do, plug in the strings
-						}else if(variables[i] == "$Y"){
-							variables[it]=Y;
-						} 
-					}*/
 				}
-				//if(variables[i] == "$X"){ // this will have to be changed to be the vector of names given
 				variables[i]=argVec[i];					// if they do, plug in the strings
-				/*}else if(variables[i] == "$Y"){
-					variables[i]=Y;
-				} */
 			}
 			cout << "variables vector after: "<<endl;
 			//variables.erase(variables.begin() + 2);
@@ -196,6 +183,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 			for(int i = 1; i < factNames.size(); i+=2){ // for each fact in factnames
 				FactsNum= atoi(factNames[i+1].c_str());
 				string FactInQ = factNames[i];
+				int factsIndex = i;
 				cout<<"FactInQ: "  <<FactInQ<<endl;
 				cout<<factNames[i]<<" "<< FactsNum<<endl;
 				if(fmap.count(factNames[i]) == 1){ // if its a fact
@@ -210,153 +198,47 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 							break;
 						}
 					}
+					bool temps = false;
 					for (int finder = offset; finder <fmap[FactInQ]->vstring.size(); finder+= (FactsNum +1)){
 						if(fmap[FactInQ]->vstring[finder] == temp[offset]){
 							for(int parser = 0; parser < temp.size(); parser++){
 								if(fmap[FactInQ]->vstring[finder + parser] == temp[parser]){ // if the strings match
-									cout << fmap[FactInQ]->vstring[finder + parser]  << endl;
+									cout << "match: " << fmap[FactInQ]->vstring[finder + parser]  << endl;
+								} if(temp[parser][0] == '$'){
+									temps = true;
+									string tempval = tempVars[RuleVal + parser];
+									cout << "tempval: " << tempval << endl;
+									//tempVars[RuleVal + parser] =  fmap[FactInQ]->vstring[finder + parser]; // replaces $variable
+									for(int replacer = 0; replacer < tempVars.size(); replacer++){
+										if(tempVars[replacer] == tempval){
+											tempVars[replacer]  = fmap[FactInQ]->vstring[finder + parser];
+										}
+									}
+									// cout << "variable" << endl;
 								}
 							}
 						}
 					}
-					//for(int Fi = 0; Fi < fmap[FactInQ]->vstring.size(); Fi+= (FactsNum+1)){ // iterating through this fact's facts
-						//if(fmap[FactInQ]->vstring[Fi] == temp[0]){	// if the first one matches			
-							//cout << fmap["Father"];
-							/*bool correct = true;
-							for(int Itemp = 0; Itemp < temp.size(); Itemp++){ // for the things in temp 	carl $Z
-								correct = true;
-								for(int Fi = 0; Fi < fmap[FactInQ]->vstring.size(); Fi+= (FactsNum+1)){ 
-								// cout << Itemp<<"/"<<temp.size() << endl;
-									cout << fmap[FactInQ]->vstring[Fi]<< " vs " << temp[Itemp]<< endl;
-									if(fmap[FactInQ]->vstring[Fi] != temp[Itemp]){
-										if(temp[Itemp][0] == '$' && correct == true){
-											cout <<"found "<< temp[Itemp]<<endl;
-											tempVars.push_back(temp[Itemp]);
-											// cout<<FactInQ<<endl;
-										}
-									} else if(fmap[FactInQ]->vstring[Fi] == temp[Itemp]){ // if it matches
-										cout<< "found " << temp[Itemp]<< endl;
-										tempVars.push_back(temp[Itemp]);
-									} else{
-										correct = false;
-									}
-								}
-							}*/
-						//}
-					//}
-				}
-				
-			}
-			
-			/*
-			make a copy of the variables vector
-			for each fact in factnames vector
-				if its a fact
-					capture the variables vectors section for THIS FACT into a new temporary vector <Carl Z>
-					compare the non $ values to the facts vector of all the facts		Carl in Father
-					if theres a $, save it in a vector?		$Z
-					for each of the (Carl, Z)s, 
-						plug Z's string into the variables vector where ever there is a Zs 	
-									---only z: marcie. after plugging: carl, marcie, marcie, ryan
-						
-						for each fact in factnames
-							evaluate with THIS array ^^
-							if you find a fact to be true
-								delete it from the array
-							if you find a fact to be  false, 
-								break?    get back to the for each of the (Carl, Z)s,  loop
 					
-			*/
-			
-			
-			/*cout << endl;
-			if (fmap.count(FactInQ) == 1){ // if its a fact
-				for(int i = 1; i < factNames.size(); i+=2){ // for each of the facts
-					if(i+2 >= factNames.size()){break;}
-					for(int it = 0; it < fmap[FactInQ]->vstring.size();it++){ // for the strings in the facts vstring
-						if(variables[RuleVal+it][0] != '$' && fmap[FactInQ]->vstring[it] == variables[RuleVal+it]){ // if its a string and it matches
-							// carl and second carl
-							
-						} else if(variables[RuleVal+it][0] != '$' && fmap[FactInQ]->vstring[it] != variables[RuleVal+it]){
-							// for all the remaining facts, check if they have z, and if they do, check if there is that fact for carls child and child,ryan
-							
-							
-						} else if(variables[RuleVal+it][0] == '$'){// if its a variable
-							
-						}
+					if(temps == false){
+						return true;
 					}
+					cout << "tempVars: "<<endl;
+					//variables.erase(variables.begin() + 2);
+					for(auto s : tempVars){
+						cout << s << " ";
+					}
+					cout<<endl;
 					
-					/*
-					iterate through factinQs facts for x carl
-						if find x carl
-							if variables factnum+i = $var
-								variables += factnames[i+1 atoi]
-								factnames += 2
-								for this new fact
-								
-								variables vec: carl ryan carl z z ryan
-								Carl, Ryan
-								example: GrandFather
-								factNames vector: 2 Father 2 Parent 2
-					*/
-				//}
-				
-			/*} else if (rmap.count(FactInQ) == 1){ // if its another rule
-					rmap[FactInQ]->check(rmap,fmap,/*vector of new args);
-			} else {
-					cout << FactInQ <<" isn't a fact"<<endl;
-					return; 
-			}*/
-		///ready = false;
-		cout<<endl;
-	}
-	
-}
-	// variables vector:Carl, Ryan, Carl, $Z, $Z, Ryan
-	
-	/*
-	Carl, Ryan
-	example: GrandFather
-	variables vector: $X $Y $X $Z $Z $Y
-	factNames vector: 2 Father 2 Parent 2
-	
-	check the strings in question, match them to the $Variables ./
-	plug them into the facts matching $Variables ./
-	check if any of the unassigned $Variables among the facts match ./
-	for the matching $Variables, check if the string values match 
-		check each fact, same way as in 'or' ./
-		if the value of a pred begins with a $ we want to know if its in any other fact we need 
-		for the fact vector, if we find strings matching ours, skipping if ours is $ ./
-			for those strings,
-				for the other facts with $ matching our $
-					if they match, return true
-	for the solo $Variables, return true if there is a fact with a value in that spot
-	if all of those are true, the checker found a result
-	
-	
-	vector rulepreds
-	for i < factnames[0]
-		rulepreds[i] = variables [i]		// copies rule stuff into a new vector <$X,$Y>
-	
-	
-    */
-/*
-	for(int i = RuleVal; i<variables.size(); i++){ // for the variables vector (iterating through)
-		for(int it = i; it < variables.size(); it++){
-			if(variables[i][0] == '$'){ // if its one of the variables
-				if(variables[i] == variables[it]){ 	// if they match ($Z and $Z)
-					variables[it].erase(0,1);
 				}
+				
 			}
-		}
-		if(variables[i][0] == '$'){
-			variables[i].erase(0,1);
-		}
-	}
-	cout << "variables vector after: "<<endl;
-	for(auto i : variables){
-		cout << i << " ";
-	}*/
+			
+
+		cout<<endl;
+	return true;
+	//cout <<"yea"<<endl;
+}
 bool Rule::get_logop(){
 	return logop;
 }
