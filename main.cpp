@@ -39,7 +39,11 @@ void LineIn(Manipulator *M, string str, bool *done){
 				M->drop(k);
 			break;
 		case 'F':	// if(command == "INFERENCE")
-				cout << "issuing query" << endl;
+				fstor.open("write.txt");
+				s = "write.txt";
+				fstor << k;
+				fstor.close();
+				M->inference(s);
 			break;
 		case 'M':	// if(command == "DUMP")
 				M->dump();
@@ -52,18 +56,10 @@ void LineIn(Manipulator *M, string str, bool *done){
 				cout << "command not found" << endl;
 			break;
 		}
-	//fstor.close();
 }
 
 int main(int argc, char *argv[]){
 	Manipulator M;
-	// load facts and rules from file "input.txt"
-	//M.load();
-	// dump facts and rules to   file "output.txt"
-	//M.dump();
-	//query(M.Fact_map,"Father");
-	//query(M.Fact_map,"Mother");
-
 	bool done = false;
 	
 	if(argc == 2){
