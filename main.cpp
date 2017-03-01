@@ -2,26 +2,13 @@
 #include "Rule.cpp"
 #include "Manipulator.cpp"
 using namespace std;
-int main(){
-	Manipulator M;
-	// load facts and rules from file "input.txt"
-	//M.load();
-	// dump facts and rules to   file "output.txt"
-	//M.dump();
-	//query(M.Fact_map,"Father");
-	//query(M.Fact_map,"Mother");
 
-	string str;
-	string command;
-	string rest;
-	string k;
-	string s;
-	ofstream fstor;//create output file
-	bool done = false;
-	
-	while(!done){
-		cout << "Type a command: " << endl;
-		getline(cin, str);
+void LineIn(Manipulator *M, string str, bool *done){
+		string command;
+		string rest;
+		string k;
+		string s;
+		ofstream fstor;//create output file
 		stringstream iss(str);//create ss object
 		getline(iss, command, ' ');//parse first input for command
 		getline(iss, k);//parses rest of string and stores in rest
@@ -33,7 +20,7 @@ int main(){
 				s = "write.txt";
 				fstor << k;//puts rest in file
 				fstor.close();
-				M.load(s);//calls load to check if R or F and puts data where it should go
+				M->load(s);//calls load to check if R or F and puts data where it should go
 			break;
 		case 'C':	// if(command == "FACT")
 				std::cout << "Fact " << k << endl;
@@ -41,32 +28,60 @@ int main(){
 				s = "write.txt";
 				fstor << k;
 				fstor.close();
-				M.load(s);
+				M->load(s);
 			break;
 		case 'A':	// if(command == "LOAD")
 				cout << "LOAD" << endl;
-				M.load(k);
+				M->load(k);
 			break;
 		case 'O':	// if(command == "DROP")
 				cout << "drop" << endl;
-				M.drop(k);
+				M->drop(k);
 			break;
 		case 'F':	// if(command == "INFERENCE")
 				cout << "issuing query" << endl;
 			break;
 		case 'M':	// if(command == "DUMP")
-				M.dump();
+				M->dump();
 				cout << "~KB and RB dumped~" << endl;
 			break;
 		case 'I':	// if(command == "EXIT")
-			done = true;
+			*done = true;
 			break;
 		default: 
 				cout << "command not found" << endl;
 			break;
 		}
 	//fstor.close();
-	}
-	
-return 0;
 }
+
+int main(int argc, char *argv[]){
+	Manipulator M;
+	// load facts and rules from file "input.txt"
+	//M.load();
+	// dump facts and rules to   file "output.txt"
+	//M.dump();
+	//query(M.Fact_map,"Father");
+	//query(M.Fact_map,"Mother");
+
+	bool done = false;
+	
+	if(argc == 2){
+		string line;
+		ifstream readInput;
+		readInput.open(argv[1]);
+		while(getline(readInput,line)){
+			LineIn(&M, line, &done);
+		}
+	}
+	done = false;
+	while(!done){
+		string inp;
+		cout << "Type a command: " << endl;
+		getline(cin, inp);
+		LineIn(&M, inp, &done);
+	}
+
+	return 0;
+}
+	
