@@ -49,6 +49,7 @@ int main(){
 			break;
 		case 'O':	// if(command == "DROP")
 				cout << "drop" << endl;
+				M.drop(k);
 			break;
 		case 'F':	// if(command == "INFERENCE")
 				cout << "issuing query" << endl;
