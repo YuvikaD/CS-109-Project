@@ -149,16 +149,23 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 
 	// ------------------------------------AND -----------------------------------AND----------------------------------------
 	if(get_logop()==1){
-		recFunc(rmap,fmap,variables,factNames,argVec);
-		
+		bool worked;
+		worked = recFunc(rmap,fmap,variables,factNames,argVec);
+		cout << worked<< endl;
 	}
 }
 
 bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> variables, vector<string> factNames, vector<string> argVec){
 	int RuleVal = atoi(factNames[0].c_str()); 
+	
 		int FactsNum = 0;
 		//bool ready = true
 		//if(ready){
+			cout << "variables vector before: "<<endl;
+			for(auto i : variables){
+				cout << i << " ";
+			}
+			cout<<endl;
 			for(int i = 0; i < RuleVal; i++){ // for the rules predicates
 				string temp = variables[i];
 				for(int it = RuleVal; it<variables.size(); it++){
@@ -173,10 +180,6 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 			for(auto i : variables){
 				cout << i << " ";
 			}
-			//cout << endl;
-			//for(auto i : factNames){
-			//	cout << i << " ";
-			//}
 			cout<<endl;
 			vector<string> temp;
 			vector<string> tempVars = variables;
@@ -186,7 +189,7 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 				int factsIndex = i;
 				cout<<"FactInQ: "  <<FactInQ<<endl;
 				cout<<factNames[i]<<" "<< FactsNum<<endl;
-				if(fmap.count(factNames[i]) == 1){ // if its a fact
+				//if(fmap.count(factNames[i]) == 1){ // if its a fact
 					for(int it = RuleVal; it<RuleVal+FactsNum; it++){
 						temp.push_back(variables[it]);
 						cout<<"Pushed "<< variables[it]<<endl;
@@ -198,6 +201,7 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 							break;
 						}
 					}
+				if(fmap.count(factNames[i]) == 1){ // if its a fact
 					bool temps = false;
 					for (int finder = offset; finder <fmap[FactInQ]->vstring.size(); finder+= (FactsNum +1)){
 						if(fmap[FactInQ]->vstring[finder] == temp[offset]){
@@ -211,6 +215,7 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 									//tempVars[RuleVal + parser] =  fmap[FactInQ]->vstring[finder + parser]; // replaces $variable
 									for(int replacer = 0; replacer < tempVars.size(); replacer++){
 										if(tempVars[replacer] == tempval){
+											cout << "replacing " << tempVars[replacer] << " " <<  replacer<< " with "<< fmap[FactInQ]->vstring[finder + parser] <<endl;
 											tempVars[replacer]  = fmap[FactInQ]->vstring[finder + parser];
 										}
 									}
@@ -220,24 +225,27 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 						}
 					}
 					
-					if(temps == false){
-						return true;
-					}
-					cout << "tempVars: "<<endl;
-					//variables.erase(variables.begin() + 2);
-					for(auto s : tempVars){
-						cout << s << " ";
-					}
-					cout<<endl;
-					
-				}
-				
-			}
-			
+					//if(temps == false){ //no $signs
+						//cout << "temps is false"<<endl;
+						//return true;
+						//rmap[FactInQ]->check(rmap,fmap,temp);
+					//}
+					//cout<<endl;
 
-		cout<<endl;
-	return true;
-	//cout <<"yea"<<endl;
+					//bool done = recFunc(rmap,fmap, tempVars, factNames, argVec);
+					//f(done){
+						
+					//}
+
+				}else if (rmap.count(FactInQ) == 1){ // if its another rule
+					//rmap[FactInQ]->check(rmap,fmap,temp);
+				} else {
+					cout << FactInQ <<" isn't a fact or rule"<<endl;
+					return false; 
+				}
+			cout<<endl;
+			return true;
+			}
 }
 bool Rule::get_logop(){
 	return logop;
