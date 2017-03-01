@@ -87,24 +87,24 @@ int main(){
 	
 	// print out facts and rules for debugging
 	
-	for(map<string,Fact*>::iterator it = Fact_map.begin(); it != Fact_map.end(); ++it) {
+	/*for(map<string,Fact*>::iterator it = Fact_map.begin(); it != Fact_map.end(); ++it) {
 		cout << " " 
 		<< it->first << ": " 
 		<< it->second << endl;
-    }
+    }*/
 	
-	for(map<string,Rule*>::iterator it = Rule_map.begin(); it != Rule_map.end(); ++it) {
+	/*for(map<string,Rule*>::iterator it = Rule_map.begin(); it != Rule_map.end(); ++it) {
 		cout //<< " " 
 		<< it->first << ": " 
 		<< it->second->get_logop() << " " << it->second << endl;
-    }
+    }*/
 
-	query(Fact_map,"Father");
-	query(Fact_map,"Mother");
+	//query(Fact_map,"Father");
+	//query(Fact_map,"Mother");
 	
-	cout << "--------------" << endl;
-	Rquery(Rule_map,"GrandFather");
-	Rule_map["GrandFather"]->check("Marcie","Ryan");
-	
+	cout << "-----------------------------------" << endl;
+	// Rquery(Rule_map,"GrandFather");
+	vector<string> argVec={"Carl","Ryan"};
+	Rule_map["GrandFather"]->check(Rule_map,Fact_map,argVec);
 	
 }
