@@ -4,12 +4,9 @@ using namespace std;
 Manipulator:: Manipulator(){}	// constructor
 Manipulator::~Manipulator(){}	// destructor 
 
-void Manipulator::drop(string k){
-	string name;
-	stringstream ss(k);
-	getline(ss,name,'(');//get name
-	Fact_map.erase(name);
-	Rule_map.erase(name);
+void Manipulator::drop(string name){
+	if(Fact_map.find(name)!=Fact_map.end()) Fact_map.erase(name);
+	if(Rule_map.find(name)!=Rule_map.end()) Rule_map.erase(name);
 	cout <<'dropped' << endl;		
 }
 
