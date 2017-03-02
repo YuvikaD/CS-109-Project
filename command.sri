@@ -1,0 +1,5 @@
+FACT Mother(Marcie,Ryan)
+FACT Mother(Jane,Marcie)
+INFERENCE Mother($X,$Y)
+LOAD input.txt
+

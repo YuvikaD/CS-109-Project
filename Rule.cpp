@@ -56,6 +56,42 @@ void Rquery(map<string,Rule*> rmap,string s){
 		cout << "The rule named " << s << " is not in here" << endl;
 	}
 }
+
+void yuvi_Function(string line,Rule * rule){
+	string rulename,nobanana,vars;
+	vector<string> varVec;
+	stringstream iss(line);
+	getline(iss,rulename,'(');
+	getline(iss,nobanana,')');
+	stringstream iss2(nobanana);
+	while(getline(iss2,vars,',')){
+		varVec.push_back(vars);
+	}
+	for(auto it = varVec.begin(); it != varVec.end(); ++it){
+		cout << *it << ' ';
+	}
+	cout << endl;
+  
+  //cout << rule->RuleVector << endl;
+    
+  vector<string> results;
+   for(int a=0; a<rule->RuleVector.size();++a){
+     for (auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){
+       for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){
+         string fromvector="";
+        for (auto jit = vsiter->begin(); jit != vsiter->end(); ++jit){
+          fromvector+=*jit;
+        }
+         cout << fromvector << endl;
+       }
+     }
+   }
+	// AT THIS POINT WE HAVE rulename = Parent, vector<string> = {$X,$Y}
+  
+}
+
+
+
 /*
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec, int vecIndex){
 	vector<string> variables;
@@ -275,6 +311,12 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 }
 
 */
+
+
+
+
+
+
 
 string Rule::get_logop(){
 	return logop;

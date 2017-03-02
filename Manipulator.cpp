@@ -1,7 +1,7 @@
 #include "Manipulator.h"
 using namespace std;
 Manipulator:: Manipulator(){}	// constructor
-Manipulator::~Manipulator(){}	// destructor 
+Manipulator::~Manipulator(){}	// constructor 
 
 void Manipulator::drop(string name){
 	if(Fact_map.find(name)!=Fact_map.end()) Fact_map.erase(name);
@@ -36,7 +36,8 @@ void Manipulator::inference(string filename){
 		cout << Fact_map[leftHandSide];
 	}
 	if(Rule_map.count(leftHandSide) == 1){
-		//cout << Rule_map[leftHandSide];
+		yuvi_Function(line, Rule_map[leftHandSide]);
+		//cout << line;	
 		//Yuvi's code 
 	}
 	
@@ -45,6 +46,7 @@ void Manipulator::inference(string filename){
 void Manipulator::load(string filename){
 ifstream readFile(filename);
 while(getline(readFile,line)){	// read from input file, put contents into 'line' string
+    cout << " W T F " << endl;
 		stringstream iss(line);		// put contents of line into a ss object
 		getline(iss,leftHandSide,')');	// read from ss object, put contents into 'leftHandSide' string until ')' char is read
 		getline(iss,separator,' ');
@@ -74,10 +76,12 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
 				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
 				(getline(iss4,rightHandSide,')'));
 				stringstream iss5(rightHandSide);
 				while(getline(iss5,preds,',')){
 					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
 				}	
 				p_vector.push_back(second_vector);			
 			}
@@ -93,6 +97,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				
 				
 				first_vector.push_back(name3);				
+				//cout << "name3 " << name3 << endl <<endl;
 				while (getline(iss5,temp,',')){				
 					first_vector.push_back(temp);			
 				}
@@ -102,10 +107,12 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
 				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
 				(getline(iss4,rightHandSide,')'));
 				stringstream iss5(rightHandSide);
 				while(getline(iss5,preds,',')){
 					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
 				}
 				
 				
@@ -114,6 +121,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 
 				Rule_map.find(name3)->second->RuleVector.push_back(space_vector2);
 				Rule_map.find(name3)->second->RuleVector.push_back(p_vector);
+				//cout << "HELLO" << endl;
 		}
 			
 		} else {	// Fact
