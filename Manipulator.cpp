@@ -1,7 +1,7 @@
 #include "Manipulator.h"
 using namespace std;
 Manipulator:: Manipulator(){}	// constructor
-Manipulator::~Manipulator(){}	// constructor 
+Manipulator::~Manipulator(){}	// destructor 
 
 void Manipulator::drop(string name){
 	if(Fact_map.find(name)!=Fact_map.end()) Fact_map.erase(name);
