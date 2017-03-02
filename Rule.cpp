@@ -1,52 +1,24 @@
+#include "common.h"
 #include "Rule.h"
 using namespace std;
 Rule::Rule(string log){// constructor 
+	//if (log == "OR"){logop = 0;}
+	//else if (log == "AND"){logop = 1;}
+	//else {cout << " constructor error: log was not AND or OR" << endl;}
 	logop = log;
-	vector<vector<vector<string>>> RuleVector;	
+	vector<vector<string>> paramVector(100);
+	
 }
-ostream& operator<< (std::ostream &os, Rule* rule){
-	int increment=0;
-	bool no = false;
-	//bool pipe = false;
-	for(int a=0; a<rule->RuleVector.size();++a){
-		//pipe =false;
-		//if (rule->RuleVector[a][0][0] == "|"){;pipe=true;}
-		bool left=true;
-		for (auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){
-			int pos = vvsiter - rule->RuleVector.begin();
-			if(pos>=increment){
-				increment++;
-				bool rool=true;
-				for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){
-					bool first2 = true;
-					bool paren = true;
-					bool second= true;	
-					for (auto jit = vsiter->begin(); jit != vsiter->end(); ++jit){
-						int jpos = jit - vsiter->begin();	
-						no=false;
-						if (*jit=="|"){no=true;os<<endl;break;} // if multiple of same rule, new line, break
-							if(no){break;}
-							string stt = *jit;
-							stt.erase(remove(stt.begin(), stt.end(), ' '), stt.end());
-							if(rool){rool=false;if(paren){os << *jit << "("; paren=false;}}
-							else if(paren)	{os << " " << stt << "("; 	paren=false;}
-							else if(second)	{os << stt; 				second=false;}
-							else if(first2)	{os << ',' << stt; }
-					}
-				if(no){break;} 	// if multiple of same rule, break
-				if(left) {os << "):- " << rule->get_logop(); left=false;} // print separator and Logical Operator
-				else{os << ')';}
-				if(no){break;}		// if multiple of same rule, break
-				}
-			if(no){break;}			// if multiple of same rule, break
-			}
+
+ostream& operator<< (std::ostream &os, Rule* rule)
+{
+	for(vector<string> i : rule->paramVector){
+		for(string s : i){
+			cout << s << " ";
 		}
 	}
-	if(!no){os<<endl;}
     return os;
 }
-
-
 
 void Rquery(map<string,Rule*> rmap,string s){
 	if(rmap.count(s) == 1){
@@ -56,10 +28,12 @@ void Rquery(map<string,Rule*> rmap,string s){
 		cout << "The rule named " << s << " is not in here" << endl;
 	}
 }
-/*
-void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec, int vecIndex){
+
+void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec){
+	//cout << "0" << endl;
 	vector<string> variables;
 	vector<string> factNames;
+	//cout << "0.1" << endl;
 	int loops = 0;
 	int maincount = 0;
 	int count = 0; // count for dealing with rule's stuff
@@ -105,7 +79,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	}
 	cout<< endl;
 		// OR ------------------------------- OR-----------------------------------OR-------------------------------
-	if(get_logop() == "OR"){
+	if(get_logop() == "OR"){ // is it OR
 	bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 		int RuleVal = 0;	// the rule's predicate #
 		string FactInQ = ""; // Fact in Question - fact we are going to look at
@@ -125,47 +99,53 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 					ready = true;
 				} 
 			}  if (ready){ // when you have a fact type and it's param #
-				cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
-				// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
-				bool going = true;
-				while(going){
-					for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
-						if(variables[it] != variables[it+RuleVal]){
-							cout<< "variables don't match"<<endl;
-							going = false;
-							break;
-						} // if variables match:
-						bool resultFound = true;
-						//for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
-							for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
-								for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
-									if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && (varLimit+1==RuleVal)){
-										cout<< "FOUND: " << argVec[0]<< " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
-										cout<<"ending "<< FactInQ <<" fact search"<<endl;
-										return;
-									} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit]){
-										resultFound = false;
-									} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit]){
-										i++;
+				if(fmap.count(FactInQ) == 1){
+					cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+					bool going = true;
+					while(going){
+						for(int it = 0; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
+							if(variables[it] != variables[it+RuleVal]){
+								cout<< "variables don't match"<<endl;
+								going = false;
+								break;
+							} // if variables match:
+							bool resultFound = true;
+							//for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
+								for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match
+									for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for 0, 1, marcie ryan
+										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && (varLimit+1==RuleVal)){
+											cout<< "FOUND: " << argVec[0]<< " is a " << FactInQ <<" and a "<< paramVector[0][0]<<endl;
+											cout<<"ending "<< FactInQ <<" fact search"<<endl;
+											return;
+										} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit]){
+											resultFound = false;
+										} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit]){
+											i++;
+										}
 									}
+									resultFound = true;
 								}
-								resultFound = true;
-							}
-							
-						//}
+								
+							//}
+						}
+						// if its not found:
+						cout<< paramVector[0][0]<<" NOT FOUND: ";
+						for(string preds : argVec){
+							cout<<preds << ", ";
+						}
+						cout << " in "<< FactInQ <<endl;
+						cout<<"ending "<< FactInQ <<" fact search"<<endl;
+						FactsNum = 0; // resets these for the next Fact Type
+						numOrString = 1;
+						going = false;
 					}
-					// if its not found:
-					cout<< paramVector[0][0]<<" NOT FOUND: ";
-					for(string preds : argVec){
-						cout<<preds << ", ";
-					}
-					cout << " in "<< FactInQ <<endl;
-					cout<<"ending "<< FactInQ <<" fact search"<<endl;
-					FactsNum = 0; // resets these for the next Fact Type
-					numOrString = 1;
-					going = false;
+					ready = false;
+				} else if (rmap.count(FactInQ) == 1){ // if its another rule
+					rmap[FactInQ]->check(rmap,fmap, X, Y);
+				} else {
+					cout << "Error with Fact/Rule " << FactInQ << endl;
 				}
-				ready = false;
 			}
 		}
 	}
@@ -196,7 +176,7 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 				string temp = variables[i];
 				for(int it = RuleVal; it<variables.size(); it++){
 					if(variables[i] == variables[it]){
-						variables[it] = argVec[i];
+						variables[it] = argVec[i];	// check if they match
 					}
 				}
 				variables[i]=argVec[i];					// if they do, plug in the strings
@@ -227,9 +207,11 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 							break;
 						}
 					}
+					int keeper = 0;
+					bool kept = false;
 				if(fmap.count(factNames[i]) == 1){ // if its a fact
 					bool temps = false;
-					for (int finder = offset; finder <fmap[FactInQ]->vstring.size(); finder+= (FactsNum +1)){
+					for (int finder = offset; finder <fmap[FactInQ]->vstring.size(); finder+= (FactsNum +1)){ // for all the facts
 						if(fmap[FactInQ]->vstring[finder] == temp[offset]){
 							for(int parser = 0; parser < temp.size(); parser++){
 								if(fmap[FactInQ]->vstring[finder + parser] == temp[parser]){ // if the strings match
@@ -241,6 +223,7 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 									//tempVars[RuleVal + parser] =  fmap[FactInQ]->vstring[finder + parser]; // replaces $variable
 									for(int replacer = 0; replacer < tempVars.size(); replacer++){
 										if(tempVars[replacer] == tempval){
+											if(kept == false){keeper = replacer; kept = true;}
 											cout << "replacing " << tempVars[replacer] << " " <<  replacer<< " with "<< fmap[FactInQ]->vstring[finder + parser] <<endl;
 											tempVars[replacer]  = fmap[FactInQ]->vstring[finder + parser];
 										}
@@ -250,12 +233,22 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 							}
 						}
 					}
-					
-					//if(temps == false){ //no $signs
+					cout << "variables vector after replacement: "<<endl;
+					//variables.erase(variables.begin() + 2);
+					for(auto i : tempVars){
+						cout << i << " ";
+					}
+					cout<<endl;
+					if(temps == false){ //no $signs
+						for (int it = 0; it < FactsNum; it++){ // remove it from the vector
+							variables.erase(variables.begin() + RuleVal + keeper);
+						}
+						factNames.erase(factNames.begin() + i);
+						factNames.erase(factNames.begin() + i+1);
 						//cout << "temps is false"<<endl;
 						//return true;
 						//rmap[FactInQ]->check(rmap,fmap,temp);
-					//}
+					}
 					//cout<<endl;
 
 					//bool done = recFunc(rmap,fmap, tempVars, factNames, argVec);
@@ -264,7 +257,8 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 					//}
 
 				}else if (rmap.count(FactInQ) == 1){ // if its another rule
-					//rmap[FactInQ]->check(rmap,fmap,temp);
+					//rmap[FactInQ]->check(rmap,fmap,tempVars);
+					recFunc(rmap,fmap,tempVars,factNames,argVec);
 				} else {
 					cout << FactInQ <<" isn't a fact or rule"<<endl;
 					return false; 
@@ -273,9 +267,6 @@ bool Rule::recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string>
 			return true;
 			}
 }
-
-*/
-
 string Rule::get_logop(){
 	return logop;
 }
