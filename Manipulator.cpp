@@ -6,7 +6,6 @@ Manipulator::~Manipulator(){}	// destructor
 void Manipulator::drop(string name){
 	if(Fact_map.find(name)!=Fact_map.end()) Fact_map.erase(name);
 	if(Rule_map.find(name)!=Rule_map.end()) Rule_map.erase(name);
-	cout << "dropped" << endl;		
 }
 
 void Manipulator::dumpFacts(ostream &os){
