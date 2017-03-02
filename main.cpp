@@ -31,12 +31,12 @@ void LineIn(Manipulator *M, string str, bool *done){
 				M->load(s);
 			break;
 		case 'A':	// if(command == "LOAD")
-				cout << "LOAD" << endl;
 				M->load(k);
+				cout << "Loaded" << endl;
 			break;
 		case 'O':	// if(command == "DROP")
-				cout << "drop" << endl;
 				M->drop(k);
+				cout << "Dropped" << endl;
 			break;
 		case 'F':	// if(command == "INFERENCE")
 				fstor.open("write.txt");
@@ -44,6 +44,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 				fstor << k;
 				fstor.close();
 				M->inference(s);
+				cout << "~query issued~" <<endl;
 			break;
 		case 'M':	// if(command == "DUMP")
 				M->dump();
@@ -53,7 +54,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 			*done = true;
 			break;
 		default: 
-				cout << "command not found" << endl;
+				cout << "not a valid command" << endl;
 			break;
 		}
 }
@@ -61,7 +62,17 @@ void LineIn(Manipulator *M, string str, bool *done){
 int main(int argc, char *argv[]){
 	Manipulator M;
 	bool done = false;
-	
+	string welcome = "\n-----------Welcome to the SIMPLE RULE-BASE INFERENCE ENGINE!------------\n\n"
+			"Let's get started.\n" 
+			"Below are a list of user commands & what they do.\n\n"
+			"	LOAD - type the file, fact or rule you'd like to load\n"
+			"	FACT - define a fact to add to the Knowlegde Base (KB)\n"
+			"	RULE - define a rule to add to the Rule Base (RB) \n"
+			"	INFERENCE - issue a query\n"
+			"	DROP - used to delete a fact from the KB and RB\n"
+			"	DUMP - prints the contents of KB and RB to an .sri file\n"
+			"	EXIT - exit the SRI\n";
+	cout << welcome <<endl;
 	if(argc == 2){
 		string line;
 		ifstream readInput;
@@ -70,6 +81,7 @@ int main(int argc, char *argv[]){
 			LineIn(&M, line, &done);
 		}
 	}
+	done = false;
 	while(!done){
 		string inp;
 		cout << "Type a command: " << endl;
@@ -80,3 +92,4 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 	
+
