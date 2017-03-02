@@ -1,23 +1,23 @@
 #Makefile 
-#jk CPP = g++
-# FLAGS = -g -Wall
+CPP = g++
+FLAGS = -Wall -std=c++14
 # SRCS = main.cpp Rule.cpp Fact.cpp Manipulator.cpp 
 # OBJ = main.o Rule.o Fact.o Manipulator.o
 
-all: SRI
+all: sri
 
-SRI: main.o Manipulator.o Rule.o Fact.o
-	g++ main.o Manipulator.o Rule.o Fact.o -o SRI
+sri: main.o Manipulator.o Rule.o Fact.o
+	$(CPP) $(FLAGS) -o sri main.o Manipulator.o Rule.o Fact.o
 
 main.o: main.cpp
-	g++ -c main.cpp
+	$(CPP) $(FLAGS) -c main.cpp
 	
 Manipulator.o: Manipulator.cpp Manipulator.h
-	g++ -c Manipulator.cpp
+	$(CPP) $(FLAGS) -c Manipulator.cpp
 
 Rule.o: Rule.cpp Rule.h common.h
-	g++ -c Rule.cpp
+	$(CPP) $(FLAGS) -c Rule.cpp
 
 Fact.o: Fact.cpp Fact.h common.h
-	g++ -c Fact.cpp
+	$(CPP) $(FLAGS) -c Fact.cpp
 	 
