@@ -10,8 +10,9 @@ class Rule {
 
 	string get_logop();
 	void Rquery(map<string,Rule*> rmap,string s);
+	void evaluate(string line, Rule * rule,map<string,Fact*> fmap, map<string,Rule*> rmap);
 	//bool recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> variables, vector<string> factNames, vector<string> argVec);
-	//void check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec,int vecIndex);
+	void check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
 	void printRule();
 	friend ostream& operator<< (ostream &os, Rule* rule);
 	friend ostream& operator<< (ostream &os, vector<string> vstring);

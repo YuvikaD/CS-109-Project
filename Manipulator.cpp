@@ -1,11 +1,12 @@
 #include "Manipulator.h"
 using namespace std;
 Manipulator:: Manipulator(){}	// constructor
-Manipulator::~Manipulator(){}	// destructor 
+Manipulator::~Manipulator(){}	// constructor 
 
 void Manipulator::drop(string name){
 	if(Fact_map.find(name)!=Fact_map.end()) Fact_map.erase(name);
 	if(Rule_map.find(name)!=Rule_map.end()) Rule_map.erase(name);
+	cout << "dropped" << endl;		
 }
 
 void Manipulator::dumpFacts(ostream &os){
@@ -35,7 +36,8 @@ void Manipulator::inference(string filename){
 		cout << Fact_map[leftHandSide];
 	}
 	if(Rule_map.count(leftHandSide) == 1){
-		//cout << Rule_map[leftHandSide];
+		evaluate(line, Rule_map[leftHandSide],Fact_map,Rule_map);
+		//cout << line;	
 		//Yuvi's code 
 	}
 	
@@ -73,10 +75,12 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
 				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
 				(getline(iss4,rightHandSide,')'));
 				stringstream iss5(rightHandSide);
 				while(getline(iss5,preds,',')){
 					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
 				}	
 				p_vector.push_back(second_vector);			
 			}
@@ -92,6 +96,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				
 				
 				first_vector.push_back(name3);				
+				//cout << "name3 " << name3 << endl <<endl;
 				while (getline(iss5,temp,',')){				
 					first_vector.push_back(temp);			
 				}
@@ -101,10 +106,12 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
 				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
 				(getline(iss4,rightHandSide,')'));
 				stringstream iss5(rightHandSide);
 				while(getline(iss5,preds,',')){
 					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
 				}
 				
 				
@@ -113,6 +120,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 
 				Rule_map.find(name3)->second->RuleVector.push_back(space_vector2);
 				Rule_map.find(name3)->second->RuleVector.push_back(p_vector);
+				//cout << "HELLO" << endl;
 		}
 			
 		} else {	// Fact
