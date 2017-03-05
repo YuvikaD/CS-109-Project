@@ -3,6 +3,8 @@ using namespace std;
 Fact:: Fact(string name){	// constructor 
 	title = name;
 	vector<string> vstring;
+	//vector<string> fromvectorRaw;
+	vector<vector<string>> savedResultsVector;
 }	
 
 vector<string> Fact::get_vstring(){

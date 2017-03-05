@@ -2,7 +2,8 @@
 using namespace std;
 Rule::Rule(string log){// constructor 
 	logop = log;
-	vector<vector<vector<string>>> RuleVector;	
+	vector<vector<vector<string>>> RuleVector;
+	vector<vector<vector<string>>> savedResultsVector;
 }
 ostream& operator<< (std::ostream &os, Rule* rule){
 	int increment=0;
@@ -185,101 +186,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	}
 	cout << endl;
 }
-void evaluate(string line,Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){
-  
-  bool filter = true;
-	string rulename,nobanana,vars;
-	vector<string> varVec;
-	stringstream iss(line);
-	getline(iss,rulename,'(');
-	getline(iss,nobanana,')');
-	stringstream iss2(nobanana);
-	while(getline(iss2,vars,',')){
-		varVec.push_back(vars);
-    if(vars[0] == '$'){
-      filter = false;
-    }
-	}
-  
-  if(filter){
-    rule->check(rmap,fmap, varVec);
-  }
-  
-  if(!filter){
-  if(rule->get_logop() == "OR"){
-  //vector<string> results;
-     for(auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){ // go thru RuleVector
-       for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){ // go thru p_vector
-          if(vsiter == vvsiter->begin()){} // do nothing for the rule itself to avoid infinite recursion
-         else{
-         string fromvector="";
-         string name;
-         string rules;
-          for(auto jit = vsiter->begin(); jit !=vsiter->end();++jit){
-            if(*jit == "|"){}           // If the Rule has multiple of the same name, skip the separator
-            else if(jit==vsiter->begin()){name=*jit;fromvector+=*jit;rules = *jit;}
-            else {
-              //cout <<"Rules set to "<< rules<<endl;
-            fromvector+=*jit;           // get the name of the fact or rule, eg "Father"
-            }
-          }
-            if(fromvector!=""){
-             if(fmap.count(name) == 1){    // if it's a fact
-               //cout << "fromvector: " << fromvector << endl;
-               //cout << "name: " << name << endl;
-              cout << fmap[name];  // prints all the factual results
-               
-             }else if (rmap.count(rules) == 1){ // if it's a rule
-              // cout << "fromvector: " << fromvector << endl;
-               //cout << "rules: " << rules << endl;
-                evaluate(fromvector,rmap[rules],fmap,rmap); // prints all the rule results
-             }
-            }
-            
-          }
-       }
-       //}
-       
-       
-       
-    }
-}
-    /*
-    if(rule->get_logop() == "AND"){
-      for(auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){ // go thru RuleVector
-       for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){ // go thru p_vector
-          if(vsiter == vvsiter->begin()){} // do nothing for the rule itself to avoid infinite recursion
-         else{
-         string fromvector="";
-         string name;
-         string rules;
-          for(auto jit = vsiter->begin(); jit !=vsiter->end();++jit){
-            if(*jit == "|"){}           // If the Rule has multiple of the same name, skip the separator
-            else if(jit==vsiter->begin()){name=*jit;fromvector+=*jit;rules = *jit;}
-            else {
-              //cout <<"Rules set to "<< rules<<endl;
-            fromvector+=*jit;           // get the name of the fact or rule, eg "Father"
-            }
-            if(fromvector!=""){
-             if(fmap.count(name) == 1){    // if it's a fact
-              cout << fmap[name];  // prints all the factual results
-               
-             }else if (rmap.count(rules) == 1){ // if it's a rule
-                evaluate(fromvector,rmap[rules],fmap,rmap); // prints all the rule results
-             }
-            }
-            
-          }
-       }
-       }
-       
-       
-       
-    }
-    }
-    */
-}
-  }
+
 
 
 string Rule::get_logop(){

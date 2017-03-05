@@ -36,12 +36,150 @@ void Manipulator::inference(string filename){
 		cout << Fact_map[leftHandSide];
 	}
 	if(Rule_map.count(leftHandSide) == 1){
-		evaluate(line, Rule_map[leftHandSide],Fact_map,Rule_map);
+		evaluate(line,Rule_map[leftHandSide],Fact_map,Rule_map);
+		
+		for (auto it = rawPredicates.begin(); it != rawPredicates.end();++it){
+			for (auto it2 = it->begin(); it2 != it->end();++it2){
+				//cout << "it2: " << *it2 << " ";
+			
+			string it3 = *(it->begin());
+			
+			cout << "SAVEDRESULTSVECTOR: " << endl;
+			for(vector<string> i : Fact_map[it3]->savedResultsVector){
+				for(string s : i){
+					cout << s << " ";
+				}
+			}
+			
+			cout << endl;	
+			}
+		}
+		
+		
+		
 		//cout << line;	
 		//Yuvi's code 
 	}
 	
 }
+
+void Manipulator::evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){
+  
+  bool filter = true;
+	string rulename,nobanana,vars;
+	vector<string> varVec;
+	stringstream iss(line);
+	getline(iss,rulename,'(');
+	getline(iss,nobanana,')');
+	stringstream iss2(nobanana);
+	while(getline(iss2,vars,',')){
+		varVec.push_back(vars);
+    if(vars[0] == '$'){
+      filter = false;
+    }
+	}
+  
+  //if(filter){
+  //  rule->check(rmap,fmap, varVec);
+  //}
+  
+  if(!filter){
+  if(rule->get_logop() == "OR"){
+  //vector<string> results;
+     for(auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){ // go thru RuleVector
+       for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){ // go thru p_vector
+          if(vsiter == vvsiter->begin()){} // do nothing for the rule itself to avoid infinite recursion
+         else{
+         string fromvector="";
+         string name;
+         string rules;
+		 bool skip=true;
+          for(auto jit = vsiter->begin(); jit !=vsiter->end();++jit){
+            if(*jit == "|"){}           // If the Rule has multiple of the same name, skip the separator
+            else if(jit==vsiter->begin()){name=*jit;fromvector+=(*jit + "(");rules = *jit;}
+            else {
+				if(skip){fromvector+=*jit;skip=false;}
+				else{fromvector+=("," + *jit);}         // get the name of the fact or rule, eg "Father"
+            }
+          } 
+            if(fromvector!=""){
+				fromvector+=")"; // dont really need this since I parse it off at begin of evaluate
+             if(fmap.count(name) == 1){    // if it's a fact
+               cout << "fromvector: " << fromvector << endl;
+               cout << "name: " << name << endl;
+              cout << fmap[name];  // prints all the factual results
+               
+             }else if (rmap.count(rules) == 1){ // if it's a rule
+				
+				cout << "fromvector: " << fromvector << endl;
+				cout << "rules: " << rules << endl;
+                evaluate(fromvector,rmap[rules],fmap,rmap); // prints all the rule results
+             }
+            }       
+          }
+       }   
+    }
+}
+	if(rule->get_logop() == "AND"){
+	//vector<string> results;
+		 for(auto vvsiter = rule->RuleVector.begin(); vvsiter != rule->RuleVector.end(); ++vvsiter){ // go thru RuleVector
+		   for(auto vsiter = vvsiter->begin(); vsiter!=vvsiter->end(); ++vsiter){ // go thru p_vector
+			  if(vsiter == vvsiter->begin()){} // do nothing for the rule itself to avoid infinite recursion
+			 else{
+			 string fromvector="";
+			 vector<string> fromvectorRaw;
+			 string name;
+			 string rules;
+			 bool skip=true;
+			  for(auto jit = vsiter->begin(); jit !=vsiter->end();++jit){
+				if(*jit == "|"){}           // If the Rule has multiple of the same name, skip the separator
+				else if(jit==vsiter->begin()){
+					name=*jit;fromvector+=(*jit + "(");
+					fromvectorRaw.push_back(*jit);
+					rules = *jit;
+					}
+				else {
+					if(skip){
+						fromvector+=*jit;
+						fromvectorRaw.push_back(*jit);
+						skip=false;
+					}
+					else{
+						fromvector+=("," + *jit);
+						fromvectorRaw.push_back(*jit);
+						}         // get the name of the fact or rule, eg "Father"
+				}
+			  }
+				rawPredicates.push_back(fromvectorRaw);
+				if(fromvector!=""){
+					fromvector+=")"; // dont really need this since I parse it off at begin of evaluate
+				 if(fmap.count(name) == 1){    // if it's a fact
+					cout << "fromvector: " << fromvector << endl;
+					cout << "name: " << name << endl;
+					cout << fmap[name];  // prints all the factual results
+				    fmap[name]->savedResultsVector.push_back(fmap[name]->vstring);
+					
+					
+				 }else if (rmap.count(rules) == 1){ // if it's a rule
+					
+					cout << "fromvector: " << fromvector << endl;
+					cout << "rules: " << rules << endl;
+					evaluate(fromvector,rmap[rules],fmap,rmap); // prints all the rule results
+					
+				 }
+				}   
+			  }
+		   }   
+		}
+	}
+
+
+}
+  }
+
+
+
+
 
 void Manipulator::load(string filename){
 ifstream readFile(filename);
