@@ -1,16 +1,17 @@
-#include "common.h"
 #include "Fact.h"
 using namespace std;
 Fact:: Fact(string name){	// constructor 
 	title = name;
 	vector<string> vstring;
+	//vector<string> fromvectorRaw;
+	vector<vector<string>> savedResultsVector;
 }	
 
 vector<string> Fact::get_vstring(){
 	return vstring;
 }
 
-ostream& operator<< (std::ostream &os, Fact* fact)
+ostream& operator<< (ostream &os, Fact* fact)
 {
 	os << fact->title << "(";
 	for(int n=0; n<fact->vstring.size(); n++){

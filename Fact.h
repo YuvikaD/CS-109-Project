@@ -8,7 +8,7 @@ class Fact {
 	string title;
 	public:
 	vector<string> vstring;
-	
+	vector<vector<string>> savedResultsVector;
 	vector<string> get_vstring();
 	void dumpFacts(Manipulator M);
 	void query(string s);
