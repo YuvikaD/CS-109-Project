@@ -83,8 +83,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
 			if(i == 0){ // if its the first number in factNames
 				RuleVal = atoi(factNames[0].c_str()); // then it is the Fact's predicate amount
-				for(int VarC = RuleVal; VarC < variables.size(); VarC++){
-					if(variables[VarC][0] == '$'){
+				for(int VarC = 0; VarC < argVec.size(); VarC++){
+					if(argVec[VarC][0] == '$'){
 						vars = true;
 					}
 				}
@@ -100,7 +100,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 				} 
 			}  if (ready){ // when you have a fact type and it's param #
 				if(fmap.count(FactInQ) == 1){
-					//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+				//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
 					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
 					bool going = true;
 					while(going){
@@ -117,24 +117,49 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 									for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for marcie, ryan
 										//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
 										// if they match, and its the last string to check 
-										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound){
-											if( vars || (varLimit+1==RuleVal)){
-												cout<< "FOUND: ";
-												for(int res = 0; res < argVec.size(); res++){
-													cout << fmap[FactInQ]->vstring[i - varLimit + res] << ", ";
-												}
-												/*for(string ss : argVec){
-													cout<<ss<<", ";
-												}*/
-												cout <<"in " << FactInQ <<endl;
-												//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-												if(!vars){return;}
-											}
-										} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars){
+										bool alright = (vars || (varLimit+1==RuleVal));
+										bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
+										bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());
+										
+										//if(i>5){cout << "Equals: "<<equals << " ResultFound: " << resultFound << " sizes: " << sizes <<" alright: "<<alright<<endl;}
+										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
+											//if(i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()){
+												//cout << "vars: "<<vars<<endl;
+												//if( vars || (varLimit+1==RuleVal)){
+													bool legit = true;
+													for(int res = 0; res < argVec.size(); res++){
+														if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
+															legit = false; // maybe seg fault causing
+														}
+													}
+													if(legit){
+														cout<< "FOUND: ";
+														/*for(string bla : fmap[FactInQ]->vstring){
+															cout << bla << " ";
+														} cout <<endl;*/
+														for(int res = 0; res < argVec.size(); res++){
+															//cout << "index "<<i - varLimit + res<<endl;
+															cout << fmap[FactInQ]->vstring[i - varLimit + res] << ", ";
+														}
+														/*for(string ss : argVec){
+															cout<<ss<<", ";
+														}*/
+														cout <<"in " << FactInQ <<endl;
+														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+														if(!vars){return;}
+													}
+													
+												//}
+											//}
+											
+										} else if(fmap[FactInQ]->vstring[i] == "|"){
+											resultFound = false;
+										}else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars && equals){
+											//if(i>5){cout<<"setting resultFound to false, "<<fmap[FactInQ]->vstring[i] << " != " << argVec[varLimit]<<endl;}
 											resultFound = false;
 										} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit] || vars){
-											//i++;
-										}
+											//i++; // this causes seg fault
+										} 
 									}
 									resultFound = true;
 								}

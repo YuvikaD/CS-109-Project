@@ -44,7 +44,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 				fstor << k;
 				fstor.close();
 				M->inference(s);
-				cout << "~query issued~" <<endl;
+				//cout << "~query issued~" <<endl;
 			break;
 		case 'M':	// if(command == "DUMP")
 				M->dump();
