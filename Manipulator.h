@@ -21,12 +21,16 @@ class Manipulator {
 	string preds;
 	
 	public:
+	vector<vector<string>> rawPredicates;
 	map<string,Fact*> Fact_map;
 	map<string,Rule*> Rule_map;
+	void drop(string name);
 	void dumpFacts(ostream &os);
 	void dumpRules(ostream &os);
 	void dump();
-	void load();
+	void load(string filename);
+	void inference(string filename);
+	void evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap);
 	Manipulator();
 	~Manipulator();
 };

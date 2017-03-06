@@ -1,34 +1,36 @@
-#include "common.h"
 #include "Fact.h"
 using namespace std;
 Fact:: Fact(string name){	// constructor 
 	title = name;
 	vector<string> vstring;
+	//vector<string> fromvectorRaw;
+	vector<vector<string>> savedResultsVector;
 }	
 
 vector<string> Fact::get_vstring(){
 	return vstring;
 }
 
-void Fact::printFact(){
-	for (vector<string>::iterator it = vstring.begin() ; it != vstring.end(); ++it){ 
-		cout << *it << " ";
-	}
-	cout << endl;
-}
-
-ostream& operator<< (std::ostream &os, Fact* fact)
+ostream& operator<< (ostream &os, Fact* fact)
 {
-	for(string i : fact->vstring){
-			cout << i << " ";
+	os << fact->title << "(";
+	for(int n=0; n<fact->vstring.size(); n++){
+		string i = fact->vstring[n];
+		string m;
+		if(n+1 != (fact->vstring.size())) m = fact->vstring[n+1];
+		if(!i.compare("|")){
+			os << ")" << endl << fact->title << "(";
+		}else if(!m.compare("|") || n+1 == fact->vstring.size()){
+			os << i;
+		}else os << i << ",";
 	}
+	os << ")" << endl;
     return os;
 }
 
 void query(map<string,Fact*> fmap,string s){
 	if(fmap.count(s) == 1){
-		cout << s << ": " << endl
-		<< fmap[s] << endl;
+		cout << s << ": " << fmap[s] << endl;
 	}
 	else {
 		cout << "The fact named " << s << " is not in here" << endl;
