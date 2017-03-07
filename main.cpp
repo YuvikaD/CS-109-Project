@@ -46,7 +46,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 				M->inference(s);
 				/// make the following a function
 				for (auto it = M->Fact_map.begin(); it != M->Fact_map.end();++it){
-					cout << " iterating theu map of facts ";
+					///cout << " iterating theu map of facts ";
 					it->second->printed = false;
 				}
 				cout << "~query issued~" <<endl;

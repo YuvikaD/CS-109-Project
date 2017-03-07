@@ -29,13 +29,46 @@ void Manipulator::dump(){
 
 void Manipulator::inference(string filename){
 	// make LHS empty or itll mess stuff up later
+	bool filter = false;
+	string forFilter, temp, vars;
+	vector<string> varVec; // for filtering
 	vector<string> subjectsVec;
-	string leftHandSide = "";
+	string leftHandSide = "";	
 	ifstream readFile(filename);
 	getline(readFile,line);
+ while ( line.find ("\r") != string::npos )
+    {
+        line.erase ( line.find ("\r"), 1 );
+    }
 	string edited = line;
 	edited.erase(std::remove(edited.begin(), edited.end(), ' '), edited.end()); // erases spaces????
+	//edited.erase(std::remove(edited.begin(), edited.end(), ')'), edited.end()); // erases spaces????
 	replace( edited.begin(), edited.end(), ')', ',');
+	
+	//stringstream iss2(edited);
+	stringstream iss2(edited);
+	getline(iss2,temp,'(');
+	//iss2.clear();
+	//iss2.str(temp);
+	//getline(iss2,forFilter,',');
+	
+	forFilter = "";
+	varVec.clear();
+	getline(iss2,forFilter);
+	iss2.clear();
+	iss2.str(forFilter);
+	vars = "";
+	//cout << "forFilter: " << forFilter << endl;
+	while(getline(iss2,vars,',')){
+		//cout << "vars: " << vars << " " << endl;
+			if(vars != "\n" && vars != "\r" && vars != "" && vars != "\0" && vars !="\r\n"){
+				varVec.push_back(vars);
+				if(vars[0] != '$'){
+					filter = true;
+				}
+			}
+	}
+	//cout << endl;
 	edited.erase(std::remove(edited.begin(), edited.end(), '$'), edited.end());
 	stringstream iss(edited);
 	getline(iss,leftHandSide,'(');
@@ -43,6 +76,12 @@ void Manipulator::inference(string filename){
 	///cout << "edited " << edited << endl;
 	///cout << "LHS " << leftHandSide << endl;
 	
+	if(filter){
+		//// YUVI CODE IN HERE SOMHWOE
+		cout<<"doing filter";
+		///////////////////////////////////////
+	}
+	if(!filter){
 	string it3;
 	int count;
 	int total;
@@ -98,6 +137,7 @@ void Manipulator::inference(string filename){
 			///cout << *iter << endl;
 			fstor.open("write.txt");
 			fstor << *iter;
+			fstor << '\n';
 			fstor.close();
 			inference("write.txt");
 		}
@@ -115,6 +155,7 @@ void Manipulator::inference(string filename){
 		}
 		*/
 	}
+}
 }
 
 void Manipulator::evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){
