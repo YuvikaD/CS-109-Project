@@ -78,7 +78,8 @@ void Manipulator::inference(string filename){
 	
 	if(filter){
 		//// YUVI CODE IN HERE SOMHWOE
-		cout<<"doing filter";
+		//cout<<"doing filter";
+		Rule_map[leftHandSide]->check(Rule_map,Fact_map, varVec);
 		///////////////////////////////////////
 	}
 	if(!filter){

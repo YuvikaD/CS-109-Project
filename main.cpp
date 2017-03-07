@@ -49,7 +49,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 					///cout << " iterating theu map of facts ";
 					it->second->printed = false;
 				}
-				cout << "~query issued~" <<endl;
+				//cout << "~query issued~" <<endl;
 			break;
 		case 'M':	// if(command == "DUMP")
 				M->dump();
@@ -97,4 +97,3 @@ int main(int argc, char *argv[]){
 	return 0;
 }
 	
-

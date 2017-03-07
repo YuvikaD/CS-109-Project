@@ -3,7 +3,6 @@ using namespace std;
 Rule::Rule(string log){// constructor 
 	logop = log;
 	vector<vector<vector<string>>> RuleVector;
-	vector<string> infVector;
 	vector<vector<vector<string>>> savedResultsVector;
 }
 ostream& operator<< (std::ostream &os, Rule* rule){
@@ -60,7 +59,6 @@ void Rquery(map<string,Rule*> rmap,string s){
 }
 
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec){
-	cout << "Got into check function" << endl;
 	vector<string> variables;
 	vector<string> factNames;
 	this->makeVecs(variables, factNames);
@@ -76,7 +74,6 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	cout<< endl;*/
 		// OR ------------------------------- OR-----------------------------------OR-------------------------------
 	if(get_logop() == "OR"){ // is it OR
-		cout<< "got into OR" << endl;
 		bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 		bool vars = false;
 		int RuleVal = 0;	// the rule's predicate #
@@ -86,8 +83,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		for(int i = 0; i < factNames.size(); i++){ // for each: 3 Father 2 Mother 2
 			if(i == 0){ // if its the first number in factNames
 				RuleVal = atoi(factNames[0].c_str()); // then it is the Fact's predicate amount
-				for(int VarC = RuleVal; VarC < variables.size(); VarC++){
-					if(variables[VarC][0] == '$'){
+				for(int VarC = 0; VarC < argVec.size(); VarC++){
+					if(argVec[VarC][0] == '$'){
 						vars = true;
 					}
 				}
@@ -103,8 +100,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 				} 
 			}  if (ready){ // when you have a fact type and it's param #
 				if(fmap.count(FactInQ) == 1){
-					cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
-					 //cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
+				//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
 					bool going = true;
 					while(going){
 						for(int it = RuleVal; it<RuleVal+FactsNum; it++){ // checks if variables match (eg. X,Y X,Y)
@@ -115,29 +112,54 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 							} // if variables match:
 						}
 							bool resultFound = true;
-								cout << fmap[FactInQ]<<endl;
+								//cout << fmap[FactInQ]<<endl;
 								for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match, iterating through facts vstring
 									for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for marcie, ryan
-										cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
+										//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
 										// if they match, and its the last string to check 
-										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound){
-											if( vars || (varLimit+1==RuleVal)){
-												cout<< "FOUND: ";
-												for(int res = 0; res < argVec.size(); res++){
-													cout << fmap[FactInQ]->vstring[i - varLimit + res] << ", ";
-												}
-												/*for(string ss : argVec){
-													cout<<ss<<", ";
-												}*/
-												cout <<"in " << FactInQ <<endl;
-												//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-												if(!vars){return;}
-											}
-										} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars){
+										bool alright = (vars || (varLimit+1==RuleVal));
+										bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
+										bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());
+										
+										//if(i>5){cout << "Equals: "<<equals << " ResultFound: " << resultFound << " sizes: " << sizes <<" alright: "<<alright<<endl;}
+										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
+											//if(i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()){
+												//cout << "vars: "<<vars<<endl;
+												//if( vars || (varLimit+1==RuleVal)){
+													bool legit = true;
+													for(int res = 0; res < argVec.size(); res++){
+														if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
+															legit = false; // maybe seg fault causing
+														}
+													}
+													if(legit){
+														cout<< "FOUND: ";
+														/*for(string bla : fmap[FactInQ]->vstring){
+															cout << bla << " ";
+														} cout <<endl;*/
+														for(int res = 0; res < argVec.size(); res++){
+															//cout << "index "<<i - varLimit + res<<endl;
+															cout << fmap[FactInQ]->vstring[i - varLimit + res] << ", ";
+														}
+														/*for(string ss : argVec){
+															cout<<ss<<", ";
+														}*/
+														cout <<"in " << FactInQ <<endl;
+														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+														if(!vars){return;}
+													}
+													
+												//}
+											//}
+											
+										} else if(fmap[FactInQ]->vstring[i] == "|"){
+											resultFound = false;
+										}else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars && equals){
+											//if(i>5){cout<<"setting resultFound to false, "<<fmap[FactInQ]->vstring[i] << " != " << argVec[varLimit]<<endl;}
 											resultFound = false;
 										} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit] || vars){
-											//i++;
-										}
+											//i++; // this causes seg fault
+										} 
 									}
 									resultFound = true;
 								}
@@ -167,7 +189,6 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 }
 
 void Rule::makeVecs(vector<string> &variables, vector<string> &factNames){
-	cout << "got into MakeVecs" << endl;
 	int loops = 0;
 	int maincount = 0;
 	int count = 0; // count for dealing with rule's stuff
