@@ -83,11 +83,19 @@ void Manipulator::inference(string filename){
 		///////////////////////////////////////
 	}
 	if(!filter){
+		//// RYAN FUNCTION for ($X,$Y) type stuff
+		nofilter(leftHandSide, edited);
+	}
+}
+
+void Manipulator::nofilter(string leftHandSide, string edited){
 	string it3;
 	int count;
 	int total;
 	bool stopCount;
 	bool gotVar;
+	stringstream iss(edited);
+	getline(iss,leftHandSide,'(');
 	//vector<string> countVec;
 	if(Fact_map.count(leftHandSide) == 1){
 		if(Fact_map[leftHandSide]->printed == true){}
@@ -142,21 +150,7 @@ void Manipulator::inference(string filename){
 			fstor.close();
 			inference("write.txt");
 		}
-		
-		/*
-		for (auto iter = Rule_map[leftHandSide]->RuleVector.begin();iter != Rule_map[leftHandSide]->RuleVector.end(); ++iter){
-			for(auto iter2 = iter->begin(); iter2 != iter->end();++iter2){
-				if(iter2 == iter->begin()){}
-				else{
-					for(auto iter3 = iter2->begin(); iter3 != iter2->end(); ++iter2){
-					 //store Father($X,$Y) in a vector
-					}
-				}
-			}
-		}
-		*/
 	}
-}
 }
 
 void Manipulator::evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){

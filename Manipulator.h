@@ -30,6 +30,7 @@ class Manipulator {
 	void dump();
 	void load(string filename);
 	void inference(string filename);
+	void nofilter(string leftHandSide,string edited);
 	void evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap);
 	Manipulator();
 	~Manipulator();
