@@ -28,19 +28,96 @@ void Manipulator::dump(){
 }
 
 void Manipulator::inference(string filename){
+	// make LHS empty or itll mess stuff up later
+	vector<string> subjectsVec;
+	string leftHandSide = "";
 	ifstream readFile(filename);
 	getline(readFile,line);
-	stringstream iss(line);
+	string edited = line;
+	edited.erase(std::remove(edited.begin(), edited.end(), ' '), edited.end()); // erases spaces????
+	replace( edited.begin(), edited.end(), ')', ',');
+	edited.erase(std::remove(edited.begin(), edited.end(), '$'), edited.end());
+	stringstream iss(edited);
 	getline(iss,leftHandSide,'(');
+	///cout << "line " << line << endl;
+	///cout << "edited " << edited << endl;
+	///cout << "LHS " << leftHandSide << endl;
+	
+	string it3;
+	int count;
+	int total;
+	bool stopCount;
+	bool gotVar;
+	//vector<string> countVec;
 	if(Fact_map.count(leftHandSide) == 1){
-		cout << Fact_map[leftHandSide];
-	}
-	if(Rule_map.count(leftHandSide) == 1){
-		evaluate(line, Rule_map[leftHandSide],Fact_map,Rule_map);
-		//cout << line;	
-		//Yuvi's code 
+		if(Fact_map[leftHandSide]->printed == true){}
+		else{
+		string subjects="";
+		while(getline(iss,subjects,',')){
+			///cout << "SUBJECTS: " << subjects << " ";
+			Fact_map[leftHandSide]->countVec.push_back(subjects); // countVec X Y
+			///cout << "pushed " << subjects << " into countVec" << endl;
+			subjects="";
+		}
+		int inc=0;
+		count=0;
+		total=0;
+		stopCount = false;
+		for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
+			if(*iter == "|"){
+				cout << endl;
+				stopCount=true;
+			}
+			else{
+				if(!stopCount){++count;}
+				++total;
+				if(total%count ==0) {
+					///cout << "total: " << total << "count: " << count << endl;
+					///cout << "total%count ==0" << endl;
+					cout << Fact_map[leftHandSide]->countVec[count -1] 			<< ": " << *iter << '\t' << endl;
+					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[count]);
+					//Fact_map[it3]->subject.push_back(s);	// this vector will have like $X, Allen, $Z, Marget
+					}
+				else {
+					///cout << "total: " << total << "count: " << count << endl;
+					///cout << "total%count !=0" << endl;
+					cout << Fact_map[leftHandSide]->countVec[(total%count)-1] 	<< ": " << *iter << '\t' << endl;
+					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[(total%count)]);
+					//Fact_map[it3]->subject.push_back(s);
+				}
+			}
+		}
+		cout << endl;
+		Fact_map[leftHandSide]->printed = true;
+		}
 	}
 	
+	if(Rule_map.count(leftHandSide) == 1){
+		ofstream fstor;
+		for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
+			///cout << *iter << endl;
+			fstor.open("write.txt");
+			fstor << *iter;
+			fstor.close();
+			inference("write.txt");
+		}
+		
+		/*
+		for (auto iter = Rule_map[leftHandSide]->RuleVector.begin();iter != Rule_map[leftHandSide]->RuleVector.end(); ++iter){
+			for(auto iter2 = iter->begin(); iter2 != iter->end();++iter2){
+				if(iter2 == iter->begin()){}
+				else{
+					for(auto iter3 = iter2->begin(); iter3 != iter2->end(); ++iter2){
+					 //store Father($X,$Y) in a vector
+					}
+				}
+			}
+		}
+		*/
+	}
+}
+
+void Manipulator::evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){
 }
 
 void Manipulator::load(string filename){
@@ -71,6 +148,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				}
 				p_vector.push_back(first_vector);
 				while(getline(iss,data,' ')){
+					Rule_map[name3]->infVector.push_back(data); ///NEW, do for if rule exists!!!
 				stringstream iss4(data);
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
@@ -102,6 +180,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				}
 				p_vector.push_back(first_vector);
 				while(getline(iss,data,' ')){
+					Rule_map[name3]->infVector.push_back(data); /// NEW
 				stringstream iss4(data);
 				getline(iss4,predName,'(');
 				vector<string> second_vector;
@@ -122,7 +201,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				Rule_map.find(name3)->second->RuleVector.push_back(p_vector);
 				//cout << "HELLO" << endl;
 		}
-			
+		
 		} else {	// Fact
 			getline(iss3,name,'(');	
 			if(Fact_map.count(name) != 1){ 	// If this Fact is not in the map

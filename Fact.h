@@ -6,9 +6,14 @@
 using namespace std;
 class Fact {
 	string title;
-	public:
-	vector<string> vstring;
 	
+	public:
+	bool printed;
+	vector<string> vstring;
+	vector<string> countVec;
+	vector<vector<string>> savedResultsVector;
+	vector<vector<string>> rawPredicates;
+	vector<string> subject;
 	vector<string> get_vstring();
 	void dumpFacts(Manipulator M);
 	void query(string s);
