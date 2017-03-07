@@ -133,18 +133,22 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 														}
 													}
 													if(legit){
-														cout<< "FOUND: ";
+														//cout<< "FOUND: ";
 														/*for(string bla : fmap[FactInQ]->vstring){
 															cout << bla << " ";
 														} cout <<endl;*/
 														for(int res = 0; res < argVec.size(); res++){
 															//cout << "index "<<i - varLimit + res<<endl;
-															cout << fmap[FactInQ]->vstring[i - varLimit + res] << ", ";
+															
+															cout << variables[res][1] << ": ";
+															cout << fmap[FactInQ]->vstring[i - varLimit + res];
+															if(res+1!=argVec.size()){cout<< ", ";}
 														}
+														cout << endl;
 														/*for(string ss : argVec){
 															cout<<ss<<", ";
 														}*/
-														cout <<"in " << FactInQ <<endl;
+														//cout <<"in " << FactInQ <<endl;
 														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
 														if(!vars){return;}
 													}
