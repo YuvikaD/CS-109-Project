@@ -108,30 +108,28 @@ void Manipulator::nofilter(string leftHandSide, string edited){
 			subjects="";
 		}
 		int inc=0;
-		count=0;
-		total=0;
+		count=0; // 
+		total=0;  // 
 		stopCount = false;
 		for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
 			if(*iter == "|"){
 				cout << endl;
 				stopCount=true;
-			}
-			else{
+			} else {
 				if(!stopCount){++count;}
-				++total;
-				if(total%count ==0) {
-					///cout << "total: " << total << "count: " << count << endl;
-					///cout << "total%count ==0" << endl;
-					cout << Fact_map[leftHandSide]->countVec[count -1] 			<< ": " << *iter << '\t' << endl;
-					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[count]);
-					//Fact_map[it3]->subject.push_back(s);	// this vector will have like $X, Allen, $Z, Marget
-					}
-				else {
-					///cout << "total: " << total << "count: " << count << endl;
+				++total; // printing out facts
+				//cout << "total: " << total << "count: " << count << endl;
+				if(total%count !=0) {
 					///cout << "total%count !=0" << endl;
-					cout << Fact_map[leftHandSide]->countVec[(total%count)-1] 	<< ": " << *iter << '\t' << endl;
+					cout << Fact_map[leftHandSide]->countVec[(total%count)-1] 	<< ": " << *iter << " ";
 					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[(total%count)]);
 					//Fact_map[it3]->subject.push_back(s);
+				} else {
+					//cout << "total: " << total << "count: " << count << endl;
+					/////cout << "total%count ==0" << endl;
+					cout << Fact_map[leftHandSide]->countVec[count -1] 			<< ": " << *iter<<" ";
+					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[count]);
+					//Fact_map[it3]->subject.push_back(s);	// this vector will have like $X, Allen, $Z, Marget
 				}
 			}
 		}
@@ -140,7 +138,7 @@ void Manipulator::nofilter(string leftHandSide, string edited){
 		}
 	}
 	
-	if(Rule_map.count(leftHandSide) == 1){
+	if(Rule_map.count(leftHandSide) == 1){ //calls inference on rule's preds
 		ofstream fstor;
 		for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
 			///cout << *iter << endl;
