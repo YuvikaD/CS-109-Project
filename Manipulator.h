@@ -32,6 +32,7 @@ class Manipulator {
 	void inference(string filename);
 	void nofilter(string leftHandSide,string edited);
 	void evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap);
+	void factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec);
 	Manipulator();
 	~Manipulator();
 };
