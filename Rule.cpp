@@ -62,6 +62,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	vector<string> variables;
 	vector<string> factNames;
 	this->makeVecs(variables, factNames);
+	//some debugging code: 
 	/*cout << "argVec: " <<endl;
 	for(string i : argVec){
 		cout << i << " ";
@@ -105,7 +106,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 				} 
 			}  if (ready){ // when you have a fact type and it's param #
 				if(fmap.count(FactInQ) == 1){
-				//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
+					// more debugging:
+					//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
 					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
 					bool going = true;
 					while(going){
@@ -116,76 +118,52 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 								break;
 							} // if variables match:
 						}
-							bool resultFound = true;
-								//cout << fmap[FactInQ]<<endl;
-								for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match, iterating through facts vstring
-									for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for marcie, ryan
-										//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
-										// if they match, and its the last string to check 
-										bool alright = (vars || (varLimit+1==RuleVal));
-										//bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
-										//bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());
-										
-										//if(i>5){cout << "Equals: "<<equals << " ResultFound: " << resultFound << " sizes: " << sizes <<" alright: "<<alright<<endl;}
-										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
-											//if(i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()){
-												//cout << "vars: "<<vars<<endl;
-												//if( vars || (varLimit+1==RuleVal)){
-													bool legit = true; // keeps track of if the fact is correct
-													for(int res = 0; res < argVec.size(); res++){
-														if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
-															legit = false; // maybe seg fault causing
-														}
-													}
-													if(legit){ // PRINTING: 
-														//cout<< "FOUND: ";
-														/*for(string bla : fmap[FactInQ]->vstring){
-															cout << bla << " ";
-														} cout <<endl;*/
-														for(int res = 0; res < argVec.size(); res++){ // for each thing in argvec
-															//cout << "index "<<i - varLimit + res<<endl;
-															if(argVec[res][0]=='$'){						// if its a variable, print as is
-																cout << argVec[res] << ": ";
-															} else {
-																cout << variables[res][1] << ": ";		// otherwise, use the predefined word
-															}
-															cout << fmap[FactInQ]->vstring[i - varLimit + res];
-															if(res+1!=argVec.size()){cout<< ", ";}	// comma to separate - just following karims example
-														}
-														cout << endl;
-														/*for(string ss : argVec){
-															cout<<ss<<", ";
-														}*/
-														//cout <<"in " << FactInQ <<endl;
-														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-														if(!vars){ // if its completely filtered, return now (to ignore duplicates)
-															cout<<endl;
-															return;
-														}
-													}
-													
-												//}
-											//}
-											
-										} else if(fmap[FactInQ]->vstring[i] == "|"){
-											resultFound = false;
-										}else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars && equals){
-											//if(i>5){cout<<"setting resultFound to false, "<<fmap[FactInQ]->vstring[i] << " != " << argVec[varLimit]<<endl;}
-											resultFound = false;
-										} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit] || vars){
-											//i++; // this causes seg fault
-										} 
+						bool resultFound = true;
+						//cout << fmap[FactInQ]<<endl;
+						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match, iterating through facts vstring
+							for(int varLimit = 0; varLimit < RuleVal; varLimit++){// for marcie, ryan
+								//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
+								// if they match, and its the last string to check 
+								bool alright = (vars || (varLimit+1==RuleVal));
+								bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
+								//bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());	
+								if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
+									bool legit = true; // keeps track of if the fact is correct
+									for(int res = 0; res < argVec.size(); res++){
+										if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
+											legit = false; // maybe seg fault causing
+										}
 									}
-									resultFound = true;
-								}
-								////cout <<"ENDING"<<endl;
-						//}
+									if(legit){ // PRINTING: 
+										for(int res = 0; res < argVec.size(); res++){ // for each thing in argvec
+											//cout << "index "<<i - varLimit + res<<endl;
+											if(argVec[res][0]=='$'){						// if its a variable, print as is
+												cout << argVec[res] << ": ";
+											} else {
+												cout << variables[res][1] << ": ";		// otherwise, use the predefined word
+											}
+											cout << fmap[FactInQ]->vstring[i - varLimit + res];
+											if(res+1!=argVec.size()){cout<< ", ";}	// comma to separate - just following karims example
+										}
+										cout << endl;
+										//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+										if(!vars){ // if its completely filtered, return now (to ignore duplicates)
+											cout<<endl;
+											return;
+										}
+									}							
+								} else if(fmap[FactInQ]->vstring[i] == "|"){
+									resultFound = false;
+								} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars && equals){
+									//if(i>5){cout<<"setting resultFound to false, "<<fmap[FactInQ]->vstring[i] << " != " << argVec[varLimit]<<endl;}
+									resultFound = false;
+								} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit] || vars){
+									//i++; // this causes seg fault
+								} 
+							}
+							resultFound = true;
+						}
 						// if its not found:
-						//cout<< paramVector[0][0]<<" NOT FOUND: ";
-						//for(string preds : argVec){
-						//	cout<<preds << ", ";
-						//}
-						//cout << " in "<< FactInQ <<endl;
 						//cout<<"ending "<< FactInQ <<" fact search"<<endl;
 						FactsNum = 0; // resets these for the next Fact Type
 						numOrString = 1;
