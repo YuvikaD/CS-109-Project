@@ -57,7 +57,7 @@ void Rquery(map<string,Rule*> rmap,string s){
 		cout << "The rule named " << s << " is not in here" << endl;
 	}
 }
-
+/*
 void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec){
 	vector<string> variables;
 	vector<string> factNames;
@@ -79,7 +79,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	}
 	cout<< endl;*/
 		// OR ------------------------------- OR-----------------------------------OR-------------------------------
-	if(get_logop() == "OR"){ // is it OR
+	/*if(get_logop() == "OR"){ // is it OR
 		bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
 		bool vars = false; // checks if its completely filtered or partially filtered
 		int RuleVal = 0;	// the rule's predicate #
@@ -104,8 +104,8 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 					numOrString = 1; // next thing will be a string
 					ready = true;
 				} 
-			}  if (ready){ // when you have a fact type and it's param #
-				if(fmap.count(FactInQ) == 1){
+			}   if (ready){ // when you have a fact type and it's param #
+				if(fmap.count(FactInQ) == 1){ // if its a fact
 					// more debugging:
 					//cout<<"---starting "<< FactInQ <<" fact search---"<<endl;
 					// cout << "FactInQ: " << FactInQ << endl << "FactsNum: " << FactsNum<< endl << "RuleVal: "<< RuleVal << endl << "Rule: "<< paramVector[0][0]<<endl;
@@ -118,6 +118,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 								break;
 							} // if variables match:
 						}
+						
 						bool resultFound = true;
 						//cout << fmap[FactInQ]<<endl;
 						for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match, iterating through facts vstring
@@ -218,7 +219,7 @@ void Rule::makeVecs(vector<string> &variables, vector<string> &factNames){
 			}
 		}
 	}
-}
+}*/
 
 string Rule::get_logop(){
 	return logop;

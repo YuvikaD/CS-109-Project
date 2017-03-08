@@ -39,6 +39,7 @@ void LineIn(Manipulator *M, string str, bool *done){
 				cout << "Dropped" << endl;
 			break;
 		case 'F':	// if(command == "INFERENCE")
+				cout << "Issuing Query"<<endl;
 				fstor.open("write.txt");
 				s = "write.txt";
 				fstor << k;

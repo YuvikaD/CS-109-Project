@@ -33,6 +33,8 @@ class Manipulator {
 	void nofilter(string leftHandSide,string edited);
 	void evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap);
 	void factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec);
+	void ruleFilter(string rule, map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
+	void makeVecs(string rule, vector<string> &variables, vector<string> &factNames,map<string,Rule*> rmap);
 	Manipulator();
 	~Manipulator();
 };
