@@ -80,7 +80,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 		// OR ------------------------------- OR-----------------------------------OR-------------------------------
 	if(get_logop() == "OR"){ // is it OR
 		bool numOrString = 0;	// keeps track of if you're parsing the number or the fact name
-		bool vars = false;
+		bool vars = false; // checks if its completely filtered or partially filtered
 		int RuleVal = 0;	// the rule's predicate #
 		string FactInQ = ""; // Fact in Question - fact we are going to look at
 		int FactsNum = 1; // the number of predicates the Fact in Question has 
@@ -90,7 +90,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 				RuleVal = atoi(factNames[0].c_str()); // then it is the Fact's predicate amount
 				for(int VarC = 0; VarC < argVec.size(); VarC++){
 					if(argVec[VarC][0] == '$'){
-						vars = true;
+						vars = true; // if theres at least one $, its paritally filtered
 					}
 				}
 				numOrString = 1; // next val will be a string
@@ -123,34 +123,34 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 										//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
 										// if they match, and its the last string to check 
 										bool alright = (vars || (varLimit+1==RuleVal));
-										bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
-										bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());
+										//bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
+										//bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());
 										
 										//if(i>5){cout << "Equals: "<<equals << " ResultFound: " << resultFound << " sizes: " << sizes <<" alright: "<<alright<<endl;}
 										if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
 											//if(i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()){
 												//cout << "vars: "<<vars<<endl;
 												//if( vars || (varLimit+1==RuleVal)){
-													bool legit = true;
+													bool legit = true; // keeps track of if the fact is correct
 													for(int res = 0; res < argVec.size(); res++){
 														if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
 															legit = false; // maybe seg fault causing
 														}
 													}
-													if(legit){
+													if(legit){ // PRINTING: 
 														//cout<< "FOUND: ";
 														/*for(string bla : fmap[FactInQ]->vstring){
 															cout << bla << " ";
 														} cout <<endl;*/
-														for(int res = 0; res < argVec.size(); res++){
+														for(int res = 0; res < argVec.size(); res++){ // for each thing in argvec
 															//cout << "index "<<i - varLimit + res<<endl;
-															if(argVec[res][0]=='$'){
+															if(argVec[res][0]=='$'){						// if its a variable, print as is
 																cout << argVec[res] << ": ";
 															} else {
-																cout << variables[res][1] << ": ";
+																cout << variables[res][1] << ": ";		// otherwise, use the predefined word
 															}
 															cout << fmap[FactInQ]->vstring[i - varLimit + res];
-															if(res+1!=argVec.size()){cout<< ", ";}
+															if(res+1!=argVec.size()){cout<< ", ";}	// comma to separate - just following karims example
 														}
 														cout << endl;
 														/*for(string ss : argVec){
@@ -158,7 +158,7 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 														}*/
 														//cout <<"in " << FactInQ <<endl;
 														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-														if(!vars){
+														if(!vars){ // if its completely filtered, return now (to ignore duplicates)
 															cout<<endl;
 															return;
 														}
@@ -224,13 +224,13 @@ void Rule::makeVecs(vector<string> &variables, vector<string> &factNames){
 					count++;
 					//cout << "not added" << endl;
 				} else {
-					if (s[0] == '$'){
+					if (s[0] == '$'){ // if its a variable
 						varcounter ++;
-						variables.push_back(s);
+						variables.push_back(s); // add to variables vector
 						if(loops == i.size() &&  maincount == j.size()){
 							factNames.push_back(std::to_string(varcounter));
 						}
-					} else {
+					} else { // if its not a variable
 						factNames.push_back(std::to_string(varcounter));
 						factNames.push_back(s);
 						//cout << "Reset Var" << endl;
