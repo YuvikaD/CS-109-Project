@@ -62,6 +62,11 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 	vector<string> variables;
 	vector<string> factNames;
 	this->makeVecs(variables, factNames);
+	/*cout << "argVec: " <<endl;
+	for(string i : argVec){
+		cout << i << " ";
+	}
+	cout << endl;*/
 	/*cout << "variables vector: ";
 	for(auto i : variables){
 		cout << i << " ";
@@ -139,8 +144,11 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 														} cout <<endl;*/
 														for(int res = 0; res < argVec.size(); res++){
 															//cout << "index "<<i - varLimit + res<<endl;
-															
-															cout << variables[res][1] << ": ";
+															if(argVec[res][0]=='$'){
+																cout << argVec[res] << ": ";
+															} else {
+																cout << variables[res][1] << ": ";
+															}
 															cout << fmap[FactInQ]->vstring[i - varLimit + res];
 															if(res+1!=argVec.size()){cout<< ", ";}
 														}
@@ -150,7 +158,10 @@ void Rule::check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> a
 														}*/
 														//cout <<"in " << FactInQ <<endl;
 														//cout<<"ending "<< FactInQ <<" fact search"<<endl;
-														if(!vars){return;}
+														if(!vars){
+															cout<<endl;
+															return;
+														}
 													}
 													
 												//}
