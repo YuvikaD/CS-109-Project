@@ -76,16 +76,20 @@ void Manipulator::inference(string filename){
 	///cout << "edited " << edited << endl;
 	///cout << "LHS " << leftHandSide << endl;
 	
-	if(filter){
-		//// YUVI CODE IN HERE SOMHWOE
-		//cout<<"doing filter";
-		Rule_map[leftHandSide]->check(Rule_map,Fact_map, varVec);
-		///////////////////////////////////////
+	if(filter){ //if its filtered
+		if(Fact_map.count(leftHandSide) == 1){ // if its a fact
+			factFilter(leftHandSide, Fact_map, varVec);
+			return;
+		} else { // if its a rule
+			Rule_map[leftHandSide]->check(Rule_map,Fact_map, varVec);
+		}
 	}
 	if(!filter){
 		//// RYAN FUNCTION for ($X,$Y) type stuff
 		nofilter(leftHandSide, edited);
+		cout<<endl;
 	}
+	
 }
 
 void Manipulator::nofilter(string leftHandSide, string edited){
@@ -100,45 +104,47 @@ void Manipulator::nofilter(string leftHandSide, string edited){
 	if(Fact_map.count(leftHandSide) == 1){
 		if(Fact_map[leftHandSide]->printed == true){}
 		else{
-		string subjects="";
-		while(getline(iss,subjects,',')){
-			///cout << "SUBJECTS: " << subjects << " ";
-			Fact_map[leftHandSide]->countVec.push_back(subjects); // countVec X Y
-			///cout << "pushed " << subjects << " into countVec" << endl;
-			subjects="";
-		}
-		int inc=0;
-		count=0; // 
-		total=0;  // 
-		stopCount = false;
-		for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
-			if(*iter == "|"){
-				cout << endl;
-				stopCount=true;
-			} else {
-				if(!stopCount){++count;}
-				++total; // printing out facts
-				//cout << "total: " << total << "count: " << count << endl;
-				if(total%count !=0) {
-					///cout << "total%count !=0" << endl;
-					cout << Fact_map[leftHandSide]->countVec[(total%count)-1] 	<< ": " << *iter << " ";
-					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[(total%count)]);
-					//Fact_map[it3]->subject.push_back(s);
+			string subjects="";
+			while(getline(iss,subjects,',')){
+				///cout << "SUBJECTS: " << subjects << " ";
+				Fact_map[leftHandSide]->countVec.push_back(subjects); // countVec X Y
+				///cout << "pushed " << subjects << " into countVec" << endl;
+				subjects="";
+			}
+			int inc=0;
+			count=0; // 
+			total=0;  // 
+			stopCount = false;
+			for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
+				if(*iter == "|"){
+					cout << endl;
+					stopCount=true;
 				} else {
+					if(!stopCount){++count;}
+					++total;
 					//cout << "total: " << total << "count: " << count << endl;
-					/////cout << "total%count ==0" << endl;
-					cout << Fact_map[leftHandSide]->countVec[count -1] 			<< ": " << *iter<<" ";
-					//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[count]);
-					//Fact_map[it3]->subject.push_back(s);	// this vector will have like $X, Allen, $Z, Marget
+					if(total%count !=0) {
+						///cout << "total%count !=0" << endl;
+						cout << Fact_map[leftHandSide]->countVec[(total%count)-1] 	<< ": " << *iter << " ";
+						//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[(total%count)]);
+						//Fact_map[it3]->subject.push_back(s);
+					} else {
+						//cout << "total: " << total << "count: " << count << endl;
+						/////cout << "total%count ==0" << endl;
+						cout << Fact_map[leftHandSide]->countVec[count -1] 			<< ": " << *iter<<" ";
+						//Fact_map[it3]->subject.push_back(Fact_map[it3]->countVec[count]);
+						//Fact_map[it3]->subject.push_back(s);	// this vector will have like $X, Allen, $Z, Marget
+					}
 				}
 			}
+			//cout << endl;
+			Fact_map[leftHandSide]->printed = true;
 		}
-		cout << endl;
-		Fact_map[leftHandSide]->printed = true;
-		}
+		//cout<<endl;
 	}
 	
-	if(Rule_map.count(leftHandSide) == 1){ //calls inference on rule's preds
+	if(Rule_map.count(leftHandSide) == 1){
+		
 		ofstream fstor;
 		for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
 			///cout << *iter << endl;
@@ -253,5 +259,60 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 				}
 			}
 		}
+	}
+	cout<<endl<<endl;
+}
+
+void Manipulator::factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec){
+	bool resultFound = true;
+	//cout << fmap[FactInQ]<<endl;
+	for(int i = 0; i < fmap[FactInQ]->vstring.size(); i++){ // checks if strings match, iterating through facts vstring
+		for(int varLimit = 0; varLimit < argVec.size(); varLimit++){// for marcie, ryan
+			//cout << "i = " << i << " --- " << fmap[FactInQ]->vstring[i] << " vs "<<argVec[varLimit]<<endl;
+			// if they match, and its the last string to check 
+			bool vars = false;
+			for(int VarC = 0; VarC < argVec.size(); VarC++){
+					if(argVec[VarC][0] == '$'){
+						vars = true; // if theres at least one $, its paritally filtered
+					}
+				}
+			bool alright = (vars || (varLimit+1==argVec.size()));
+			bool equals = (fmap[FactInQ]->vstring[i] == argVec[varLimit]);
+			//bool sizes = (i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size());	
+			if(fmap[FactInQ]->vstring[i] == argVec[varLimit] && resultFound && i-varLimit+argVec.size() <=  fmap[FactInQ]->vstring.size()  && alright){
+				bool legit = true; // keeps track of if the fact is correct
+				for(int res = 0; res < argVec.size(); res++){
+					if(fmap[FactInQ]->vstring[i - varLimit + res] == "|"){
+						legit = false; // maybe seg fault causing
+					}
+				}
+				if(legit){ // PRINTING: 
+					for(int res = 0; res < argVec.size(); res++){ // for each thing in argvec
+						//cout << "index "<<i - varLimit + res<<endl;
+						if(argVec[res][0]=='$'){						// if its a variable, print as is
+							cout << argVec[res] << ": ";
+						} else {
+							cout << "$" << ": ";		// otherwise, use the predefined word
+						}
+						cout << fmap[FactInQ]->vstring[i - varLimit + res];
+						if(res+1!=argVec.size()){cout<< ", ";}	// comma to separate - just following karims example
+					}
+					cout << endl;
+					//cout<<"ending "<< FactInQ <<" fact search"<<endl;
+					if(!vars){ // if its completely filtered, return now (to ignore duplicates)
+						cout<<endl;
+						return;
+					}
+				}							
+			} else if(fmap[FactInQ]->vstring[i] == "|"){
+				resultFound = false;
+			} else if(fmap[FactInQ]->vstring[i] != argVec[varLimit] && !vars && equals){
+				//if(i>5){cout<<"setting resultFound to false, "<<fmap[FactInQ]->vstring[i] << " != " << argVec[varLimit]<<endl;}
+				resultFound = false;
+			} else if(fmap[FactInQ]->vstring[i] == argVec[varLimit] || vars){
+				//i++; // this causes seg fault
+			} 
+		}
+		resultFound = true;
 	}
 }
