@@ -32,7 +32,7 @@ void Manipulator::inference(string filename){
 	bool filter = false;
 	string forFilter, temp, vars;
 	vector<string> varVec; // for filtering
-	vector<string> subjectsVec;
+	//vector<string> subjectsVec;
 	string leftHandSide = "";	
 	ifstream readFile(filename);
 	getline(readFile,line);
@@ -48,10 +48,6 @@ void Manipulator::inference(string filename){
 	//stringstream iss2(edited);
 	stringstream iss2(edited);
 	getline(iss2,temp,'(');
-	//iss2.clear();
-	//iss2.str(temp);
-	//getline(iss2,forFilter,',');
-	
 	forFilter = "";
 	varVec.clear();
 	getline(iss2,forFilter);
@@ -60,7 +56,6 @@ void Manipulator::inference(string filename){
 	vars = "";
 	//cout << "forFilter: " << forFilter << endl;
 	while(getline(iss2,vars,',')){
-		//cout << "vars: " << vars << " " << endl;
 			if(vars != "\n" && vars != "\r" && vars != "" && vars != "\0" && vars !="\r\n"){
 				varVec.push_back(vars);
 				if(vars[0] != '$'){
@@ -68,15 +63,12 @@ void Manipulator::inference(string filename){
 				}
 			}
 	}
-	//cout << endl;
 	edited.erase(std::remove(edited.begin(), edited.end(), '$'), edited.end());
 	stringstream iss(edited);
 	getline(iss,leftHandSide,'(');
-	///cout << "line " << line << endl;
-	///cout << "edited " << edited << endl;
-	///cout << "LHS " << leftHandSide << endl;
+	///cout << "line " << line  << "edited " << edited << "LHS " << leftHandSide << endl; // DEBUGGING
 	
-	if(filter){ //if its filtered
+	if(filter){
 		if(Fact_map.count(leftHandSide) == 1){ // if its a fact
 			factFilter(leftHandSide, Fact_map, varVec);
 			return;
@@ -87,10 +79,10 @@ void Manipulator::inference(string filename){
 	}
 	if(!filter){
 		//// RYAN FUNCTION for ($X,$Y) type stuff
-		nofilter(leftHandSide, edited);
-		cout<<endl;
+		//if((Rule_map.count(leftHandSide) == 1 && Rule_map[leftHandSide]->get_logop() == "OR") || Fact_map.count(leftHandSide) == 1){
+			nofilter(leftHandSide, edited, varVec);
+		//}
 	}
-	
 }
 
 void Manipulator::nofilter(string leftHandSide, string edited, vector<string> varVec){
@@ -255,112 +247,6 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				
 			}
 		}
-}
-
-void Manipulator::evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap){
-}
-
-void Manipulator::load(string filename){
-ifstream readFile(filename);
-while(getline(readFile,line)){	// read from input file, put contents into 'line' string
-		stringstream iss(line);		// put contents of line into a ss object
-		getline(iss,leftHandSide,')');	// read from ss object, put contents into 'leftHandSide' string until ')' char is read
-		getline(iss,separator,' ');
-		stringstream iss2(line);
-		stringstream iss3(leftHandSide);
-		
-		if(separator == ":-"){	// Rule
-			getline(iss2,name,':');
-			getline(iss,logop,' ');	// get logop
-			vector<vector<string>> p_vector;
-			stringstream iss6(name);
-			getline(iss6,name3,'(');
-			getline(iss6,temp2,')');
-			stringstream iss5(temp2);
-
-			if(Rule_map.count(name3) != 1){			
-				vector<string> first_vector;
-				Rule * r = new Rule(logop);	
-				Rule_map[name3] = r;
-				first_vector.push_back(name3);				
-				while (getline(iss5,temp,',')){				
-					first_vector.push_back(temp);			
-				}
-				p_vector.push_back(first_vector);
-				while(getline(iss,data,' ')){
-					Rule_map[name3]->infVector.push_back(data); ///NEW, do for if rule exists!!!
-				stringstream iss4(data);
-				getline(iss4,predName,'(');
-				vector<string> second_vector;
-				second_vector.push_back(predName);
-				//cout << "predName " << predName << endl;
-				(getline(iss4,rightHandSide,')'));
-				stringstream iss5(rightHandSide);
-				while(getline(iss5,preds,',')){
-					second_vector.push_back(preds);
-					//cout << "preds " << preds << endl;
-				}	
-				p_vector.push_back(second_vector);			
-			}
-			r->RuleVector.push_back(p_vector);
-			}
-			
-			else if(Rule_map.count(name3) == 1){
-				vector<string> first_vector;
-				vector<string> space_vector;
-				vector<vector<string>> space_vector2;
-				space_vector.push_back(space);
-				space_vector2.push_back(space_vector);
-				
-				
-				first_vector.push_back(name3);				
-				//cout << "name3 " << name3 << endl <<endl;
-				while (getline(iss5,temp,',')){				
-					first_vector.push_back(temp);			
-				}
-				p_vector.push_back(first_vector);
-				while(getline(iss,data,' ')){
-					Rule_map[name3]->infVector.push_back(data); /// NEW
-				stringstream iss4(data);
-				getline(iss4,predName,'(');
-				vector<string> second_vector;
-				second_vector.push_back(predName);
-				//cout << "predName " << predName << endl;
-				(getline(iss4,rightHandSide,')'));
-				stringstream iss5(rightHandSide);
-				while(getline(iss5,preds,',')){
-					second_vector.push_back(preds);
-					//cout << "preds " << preds << endl;
-				}
-				
-				
-				p_vector.push_back(second_vector);
-			}
-
-				Rule_map.find(name3)->second->RuleVector.push_back(space_vector2);
-				Rule_map.find(name3)->second->RuleVector.push_back(p_vector);
-				//cout << "HELLO" << endl;
-		}
-		
-		} else {	// Fact
-			getline(iss3,name,'(');	
-			if(Fact_map.count(name) != 1){ 	// If this Fact is not in the map
-				Fact * f = new Fact(name);	// make fact object, parameter ex: "Father"
-				Fact_map[name] = f;
-				while(getline(iss3,data,',')){	// add contents to the Fact object's vector, separated by ','
-					f->vstring.push_back(data);
-				}
-			}
-			
-			else if(Fact_map.count(name) == 1){ // If this Fact name already exists in the map
-				Fact_map.find(name)->second->vstring.push_back(space);
-				while(getline(iss3,data,',')){	// add contents to the Fact object's vector, separated by ','
-					Fact_map.find(name)->second->vstring.push_back(data);
-				}
-			}
-		}
-	}
-	cout<<endl<<endl;
 }
 
 void Manipulator::factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec){
@@ -575,6 +461,107 @@ void Manipulator::makeVecs(string rule, vector<string> &variables, vector<string
 						//cout << "Reset Var" << endl;
 						varcounter = 0; // resets counter for next fact
 					}
+				}
+			}
+		}
+	}
+}
+
+
+void Manipulator::load(string filename){
+ifstream readFile(filename);
+while(getline(readFile,line)){	// read from input file, put contents into 'line' string
+		stringstream iss(line);		// put contents of line into a ss object
+		getline(iss,leftHandSide,')');	// read from ss object, put contents into 'leftHandSide' string until ')' char is read
+		getline(iss,separator,' ');
+		stringstream iss2(line);
+		stringstream iss3(leftHandSide);
+		
+		if(separator == ":-"){	// Rule
+			getline(iss2,name,':');
+			getline(iss,logop,' ');	// get logop
+			vector<vector<string>> p_vector;
+			stringstream iss6(name);
+			getline(iss6,name3,'(');
+			getline(iss6,temp2,')');
+			stringstream iss5(temp2);
+
+			if(Rule_map.count(name3) != 1){			
+				vector<string> first_vector;
+				Rule * r = new Rule(logop);	
+				Rule_map[name3] = r;
+				first_vector.push_back(name3);				
+				while (getline(iss5,temp,',')){				
+					first_vector.push_back(temp);			
+				}
+				p_vector.push_back(first_vector);
+				while(getline(iss,data,' ')){
+					Rule_map[name3]->infVector.push_back(data); ///NEW, do for if rule exists!!!
+				stringstream iss4(data);
+				getline(iss4,predName,'(');
+				vector<string> second_vector;
+				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
+				(getline(iss4,rightHandSide,')'));
+				stringstream iss5(rightHandSide);
+				while(getline(iss5,preds,',')){
+					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
+				}	
+				p_vector.push_back(second_vector);			
+			}
+			r->RuleVector.push_back(p_vector);
+			}
+			
+			else if(Rule_map.count(name3) == 1){
+				vector<string> first_vector;
+				vector<string> space_vector;
+				vector<vector<string>> space_vector2;
+				space_vector.push_back(space);
+				space_vector2.push_back(space_vector);
+				
+				first_vector.push_back(name3);				
+				//cout << "name3 " << name3 << endl <<endl;
+				while (getline(iss5,temp,',')){				
+					first_vector.push_back(temp);			
+				}
+				p_vector.push_back(first_vector);
+				while(getline(iss,data,' ')){
+					Rule_map[name3]->infVector.push_back(data); /// NEW
+				stringstream iss4(data);
+				getline(iss4,predName,'(');
+				vector<string> second_vector;
+				second_vector.push_back(predName);
+				//cout << "predName " << predName << endl;
+				(getline(iss4,rightHandSide,')'));
+				stringstream iss5(rightHandSide);
+				while(getline(iss5,preds,',')){
+					second_vector.push_back(preds);
+					//cout << "preds " << preds << endl;
+				}
+				
+				
+				p_vector.push_back(second_vector);
+			}
+
+				Rule_map.find(name3)->second->RuleVector.push_back(space_vector2);
+				Rule_map.find(name3)->second->RuleVector.push_back(p_vector);
+		}
+		
+		} else {	// Fact
+			getline(iss3,name,'(');	
+			if(Fact_map.count(name) != 1){ 	// If this Fact is not in the map
+				Fact * f = new Fact(name);	// make fact object, parameter ex: "Father"
+				Fact_map[name] = f;
+				while(getline(iss3,data,',')){	// add contents to the Fact object's vector, separated by ','
+					f->vstring.push_back(data);
+				}
+			}
+			
+			else if(Fact_map.count(name) == 1){ // If this Fact name already exists in the map
+				Fact_map.find(name)->second->vstring.push_back(space);
+				while(getline(iss3,data,',')){	// add contents to the Fact object's vector, separated by ','
+					Fact_map.find(name)->second->vstring.push_back(data);
 				}
 			}
 		}
