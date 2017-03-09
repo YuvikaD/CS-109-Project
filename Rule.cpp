@@ -4,6 +4,10 @@ Rule::Rule(string log){// constructor
 	logop = log;
 	vector<vector<vector<string>>> RuleVector;
 	vector<vector<vector<string>>> savedResultsVector;
+	
+	vector<vector<string>> dollarVarsVec;
+	vector<string> userArgs;
+	vector<vector<string>> infFactsVector;
 }
 ostream& operator<< (std::ostream &os, Rule* rule){
 	int increment=0;
