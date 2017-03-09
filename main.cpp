@@ -39,17 +39,34 @@ void LineIn(Manipulator *M, string str, bool *done){
 				cout << "Dropped" << endl;
 			break;
 		case 'F':	// if(command == "INFERENCE")
-				cout << "Issuing Query"<<endl;
 				fstor.open("write.txt");
 				s = "write.txt";
 				fstor << k;
 				fstor.close();
 				M->inference(s);
+				
 				/// make the following a function
 				for (auto it = M->Fact_map.begin(); it != M->Fact_map.end();++it){
 					///cout << " iterating theu map of facts ";
 					it->second->printed = false;
 				}
+				for (auto it = M->Rule_map.begin(); it != M->Rule_map.end();++it){
+					///cout << " iterating theu map of Rules ";
+					it->second->firstInference = true;
+				}
+				/*
+				/// fix this to work with userArgs
+				for(auto iter = M->Rule_map[M->infRules[0]]->infFactsVector.begin(); iter != M->Rule_map[M->infRules[0]]->infFactsVector.end();++iter){
+					//cout << "heeloooo??" << endl;
+					for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2){
+						//cout << "??" << endl;
+						cout << *iter2 << endl;
+					}
+				}
+				*/
+	
+				M->infRules.erase(M->infRules.begin(), M->infRules.end());
+				M->printImmediately = true;
 				//cout << "~query issued~" <<endl;
 			break;
 		case 'M':	// if(command == "DUMP")
