@@ -11,6 +11,7 @@ class Fact {
 	bool printed;
 	vector<string> vstring;
 	vector<string> countVec;
+	vector<string> userArgs;
 	vector<vector<string>> savedResultsVector;
 	vector<vector<string>> rawPredicates;
 	vector<string> subject;
