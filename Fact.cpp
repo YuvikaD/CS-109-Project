@@ -5,7 +5,7 @@ Fact:: Fact(string name){	// constructor
 	bool printed = false;
 	vector<string> vstring;
 	vector<string> countVec;
-	vector<string>subject;
+	vector<string> subject;
 	//vector<string> fromvectorRaw;
 	vector<vector<string>> savedResultsVector;
 	vector<vector<string>> rawPredicates;
