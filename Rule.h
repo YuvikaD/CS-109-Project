@@ -9,6 +9,10 @@ class Rule {
 	vector<vector<vector<string>>> RuleVector;
 	vector<string> infVector;
 	vector<vector<vector<string>>> savedResultsVector;
+	vector<string> userArgs;
+	bool firstInference;
+	vector<vector<string>> dollarVarsVec;
+	vector<vector<string>> infFactsVector;
 	string get_logop();
 	void Rquery(map<string,Rule*> rmap,string s);
 	void printRule();
