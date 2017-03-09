@@ -22,7 +22,7 @@ class Manipulator {
 	
 	public:
 	bool printImmediately = true;
-	
+	vector<string> infRules;
 	vector<vector<string>> rawPredicates;
 	map<string,Fact*> Fact_map;
 	map<string,Rule*> Rule_map;
