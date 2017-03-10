@@ -403,8 +403,10 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 					Rule_map[infRules[0]]->Results.push_back(VARVECTOR);
 					VARVECTOR.clear();	// MAKE SURE TO CLEAR VARVECTOR FOR EACH NEW LOOOOPER
 				}
+				cout << "segg" << endl;
 				 
 				int j = 0;
+				cout << "infRules[0]: " << infRules[0] << endl;;
 				for(auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end(); ++it){
 					//cout << "predname: " << Rule_map[infRules[0]]->predNames[j] << endl;
 					if(Rule_map.count(Rule_map[infRules[0]]->predNames[j]) == 1 || Fact_map.count(Rule_map[infRules[0]]->predNames[j]) == 1){
@@ -418,18 +420,15 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				}
 				
 				for (auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end(); ++it){
-					for (auto it2 = it->begin(); it2 != it->end(); ++it2){
-						*it2;
-						++it;
-						for (auto it3 = it->begin(); it3 != it->end(); ++it3){
-							if(*it2 == *it3) { cout << " ITS A MATCHJH " << *it2 << " == " << *it3 << endl;}
+					for(auto it1 = Rule_map[infRules[0]]->Results.begin() + 1; it1 != Rule_map[infRules[0]]->Results.end(); ++it1){
+						for (auto it2 = it->begin(); it2 != it->end(); ++it2){
+							for (auto it3 = it1->begin(); it3 != it1->end(); ++it3){
+								if(*it2 == *it3) { cout << " ITS A MATCHJH " << *it2 << " == " << *it3 << endl;}
+								cout << "seggyloop" << endl;
+							}
 						}
-						--it;
 					}
 				}
-				
-				
-			
 				
 				/*
 				for( auto iter = VARVECTOR.begin(); iter != VARVECTOR.end(); ++iter){
