@@ -1,0 +1,6 @@
+LOAD input.txt
+INF Parent(Marcie,Ryan)
+INF Parent(Marcie,$A)
+INF Parent($X,$Y)
+INF GrandFather($X,$Y)
+

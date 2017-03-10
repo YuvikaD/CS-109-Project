@@ -2,9 +2,15 @@
 using namespace std;
 Fact:: Fact(string name){	// constructor 
 	title = name;
+	bool printed = false;
+	bool readFacts = false;
 	vector<string> vstring;
+	vector<string> countVec;
+	vector<string> subject;
+	vector<string> andVars;
 	//vector<string> fromvectorRaw;
-	vector<vector<string>> savedResultsVector;
+	//vector<vector<string>> savedResultsVector;
+	//vector<vector<string>> rawPredicates;
 }	
 
 vector<string> Fact::get_vstring(){
