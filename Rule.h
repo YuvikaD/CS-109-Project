@@ -22,11 +22,9 @@ class Rule {
 	void Rquery(map<string,Rule*> rmap,string s);
 	//void evaluate(string line,map<string,Fact*> fmap, map<string,Rule*> rmap);
 	//bool recFunc(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> variables, vector<string> factNames, vector<string> argVec);
-	void check(map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
 	void printRule();
 	friend ostream& operator<< (ostream &os, Rule* rule);
 	friend ostream& operator<< (ostream &os, vector<string> vstring);
-	void makeVecs(vector<string> &variables, vector<string> &factNames);
 	Rule(string log);	// constructor
 	~Rule();
 };
