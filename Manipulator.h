@@ -20,12 +20,16 @@ class Manipulator {
 	string data;		// the params of the Fact, like "Allen"
 	string preds;
 	
-	
 	public:
 	//vector<string> andVars;
 	int recursions=-1;
 	
 	vector<vector<string>> andVarsVec;
+	
+	vector<thread> tvec;
+	mutex mtx;
+	bool joined;
+	int tCount=0;
 	
 	bool printImmediately = true;
 	vector<string> infRules;
@@ -42,6 +46,7 @@ class Manipulator {
 	void factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec);
 	void ruleFilter(string rule, map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
 	void makeVecs(string rule, vector<string> &variables, vector<string> &factNames,map<string,Rule*> rmap);
+	void thread_OR();
 	Manipulator();
 	~Manipulator();
 };
