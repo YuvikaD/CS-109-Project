@@ -57,6 +57,7 @@ void Manipulator::inference(string filename){
 	//cout << "forFilter: " << forFilter << endl;
 	while(getline(iss2,vars,',')){
 			if(vars != "\n" && vars != "\r" && vars != "" && vars != "\0" && vars !="\r\n"){
+				cout << vars << endl;
 				varVec.push_back(vars);
 				if(vars[0] != '$'){
 					filter = true;
@@ -86,7 +87,7 @@ void Manipulator::inference(string filename){
 }
 
 void Manipulator::nofilter(string leftHandSide, string edited, vector<string> varVec){
-	//cout << "leftHandSide: " << leftHandSide << endl;
+	cout << "leftHandSide: " << leftHandSide << "edited: " << edited << endl;
 	//cout << "printImmediately: " << printImmediately << endl;
 	if(Fact_map.count(leftHandSide) == 1){
 		//printImmediately = true;
@@ -95,10 +96,11 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 	}
 
 	if(Rule_map.count(leftHandSide) == 1){
+		recursions++;
 		//cout << leftHandSide << " is a rule." << endl;
 		if (Rule_map[leftHandSide]->firstInference == true){
 			infRules.push_back(leftHandSide);
-			//cout << "pushed back " << leftHandSide << endl;
+			cout << "pushed back " << leftHandSide << endl;
 			Rule_map[leftHandSide]->userArgs = varVec;
 			Rule_map[leftHandSide]->firstInference = false;
 		}
@@ -114,13 +116,13 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 	getline(iss,leftHandSide,'(');
 	//vector<string> countVec;
 	if(Fact_map.count(leftHandSide) == 1){
-		if(Fact_map[leftHandSide]->printed == true){}
+		if(Fact_map[leftHandSide]->printed == true){cout << "alrady printed :P" << endl;}
 		else{
 		string subjects="";
 		while(getline(iss,subjects,',')){
-			///cout << "SUBJECTS: " << subjects << " ";
+			//cout << "SUBJECTS: " << subjects << " ";
 			Fact_map[leftHandSide]->countVec.push_back(subjects); // countVec X Y
-			///cout << "pushed " << subjects << " into countVec" << endl;
+			//cout << "pushed " << subjects << " into countVec" << endl;
 			subjects="";
 		}
 		int inc=0;
@@ -130,53 +132,129 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 		stopCount = false;
 		for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
 			if(*iter == "|"){
-				cout << endl;
+				if(printImmediately){
+					cout << endl;
+				}
 				stopCount=true;
 			} else {
 				if(!stopCount){++count;}
 				++total; // printing out facts
 				//cout << "total: " << total << "count: " << count << endl;
 				if(total%count !=0) {
-					///cout << "total%count !=0" << endl;
+					//cout << "total%count !=0" << endl;
 					//cout << "infRules " << infRules[0] << endl;
-					if(infRules.size() > 0){ // infRules holds rules.if true, we ran it on a rule with custom args
+					//cout << "infRule.size() " << infRules.size() << " recursions: " << recursions << endl;
+					if(infRules.size() >= recursions){ // infRules holds rules.if true, we ran it on a rule with custom args
 						//cout << "infRules " << infRules[0] << endl;
+						//cout << "seg fault? 5" << endl;
 						if(Rule_map[infRules[0]]->userArgs[res][0] == '$'){ // if it's a variable
 							if(printImmediately){
 								cout << Rule_map[infRules[0]]->userArgs[(total%res)] << ": " << *iter << " ";
+							} else{
+							//cout << "added in 1" << endl;
+							if(!Fact_map[leftHandSide]->readFacts){
+								Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[(total%res)]);
+								Fact_map[leftHandSide]->andVars.push_back(*iter);
+								///Fact_map[leftHandSide]->andVars.push_back(",");
+							}
+							//cout << "recursions: " << recursions << endl;
+							//cout << "rule: " << infRules[recursions] << endl;
+							//cout << "pushing " << Fact_map[leftHandSide]->userArgs[total%res] << endl;
+							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[(total%res)]);
+							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
+							///Rule_map[infRules[recursions]]->andVars.push_back(",");
 							}
 						}
+						//cout << "not 5" << endl; // this is where grandfather stuff is done
 						// if userArgs has anyhting in it, custom variables like $T,$y
 					}else if(Fact_map[leftHandSide]->userArgs.size()>0){	// ran it on a fact with custom args
-						///cout << " seg falut incoming? 4" << endl;
+						//cout << " seg falut incoming? 4" << endl;
 						if(printImmediately){
-							cout << Fact_map[leftHandSide]->userArgs[(total%res)] << ": " << *iter << " ";///cout << " no 4" << endl;
+							cout << Fact_map[leftHandSide]->userArgs[(total%res)] << ": " << *iter << " ";
+						} else{
+							//cout << "added in 2" << endl;
+							if(!Fact_map[leftHandSide]->readFacts){
+								Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[(total%res)]);
+								Fact_map[leftHandSide]->andVars.push_back(*iter);
+								///Fact_map[leftHandSide]->andVars.push_back(",");
+							}
+							cout << "recursions: " << recursions << endl;
+							cout << "rule: " << infRules[recursions] << endl;
+							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[(total%res)]);
+							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
+							///Rule_map[infRules[recursions]]->andVars.push_back(",");
 						}
+						//cout << " no 4" << endl;
 					}			
 					else{
 						//cout << " seg falut incoming? 1" << endl;
 						if(printImmediately){
-							cout << Fact_map[leftHandSide]->countVec[(total%count)-1] << ": " << *iter << " "; //cout << " no 1" << endl;
+							cout << Fact_map[leftHandSide]->countVec[(total%count)-1] << ": " << *iter << " "; 
+						} else{
+							///Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->countVec[(total%count)-1]);
+							///Fact_map[leftHandSide]->andVars.push_back(*iter);
+							
 						}
+						//cout << " no 1" << endl;
 					}
-				} else {
-					if(infRules.size() > 0){
-						///cout << "infRules " << infRules[0] << endl;
+				} else { // if total%count == 0
+					if(infRules.size() >= recursions){ // was > 0
+						//cout << "infRules " << infRules[0] << endl;
 						if (Rule_map[infRules[0]]->userArgs[res][0] == '$'){
 							if(printImmediately){
 								cout << Rule_map[infRules[0]]->userArgs[res] << ": " << *iter << " ";
+							} else{
+								//cout << "pushing to vector...LHS: " << leftHandSide << endl;
+								//cout << "added in 3" << endl;
+							if(!Fact_map[leftHandSide]->readFacts){
+								Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[count-1]);
+								Fact_map[leftHandSide]->andVars.push_back(*iter);
+								///Fact_map[leftHandSide]->andVars.push_back(",");
+							}
+							//cout << "recursions: " << recursions << endl;
+							//cout << "rule: " << infRules[recursions] << endl;
+							//cout << "pushing " << Fact_map[leftHandSide]->userArgs[count-1] << endl;
+							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[count-1]);
+							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
+							///Rule_map[infRules[recursions]]->andVars.push_back(",");
+							//cout << "succ suceess" << endl;
 							}
 						}
 					}else if(Fact_map[leftHandSide]->userArgs.size()>0){	// ran it on a fact with custom args
-						///cout << " seg falut incoming? 3" << endl;
+						//cout << " seg falut incoming? 3" << endl;
 						if(printImmediately){
-							cout << Fact_map[leftHandSide]->userArgs[count-1] << ": " << *iter << " ";///cout << " no 3" << endl;
+							cout << Fact_map[leftHandSide]->userArgs[count-1] << ": " << *iter << " ";
+						} else{
+							//cout << "added in 4" << endl;
+							if(!Fact_map[leftHandSide]->readFacts){
+								Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[count-1]);
+								Fact_map[leftHandSide]->andVars.push_back(*iter);
+								////Fact_map[leftHandSide]->andVars.push_back(",");
+							}
+							//cout << "recursions: " << recursions << endl;
+							//cout << "rule: " << infRules[recursions] << endl;
+							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[count-1]);
+							Rule_map[infRules[recursions]]->andVars.push_back(" "); // ADDING SPCACE
+							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
+							///Rule_map[infRules[recursions]]->andVars.push_back(",");
 						}
+						//cout << " no 3" << endl;
 					}else{
-						///cout << " seg falut incoming? 2" << endl;
+						//cout << " seg falut incoming? 2" << endl;
 						if(printImmediately){
-							cout << Fact_map[leftHandSide]->countVec[count-1] << ": " << *iter<<" "; ///cout << " no 2" << endl;
+							cout << Fact_map[leftHandSide]->countVec[count-1] << ": " << *iter<<" "; 
+						} else{
+							//cout << "added in 5" << endl;
+							///Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[count-1]);
+							///Fact_map[leftHandSide]->andVars.push_back(*iter);
+							//cout << "recursions: " << recursions << endl;
+							//cout << "rule: " << infRules[recursions] << endl;
+							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[count-1]);
+							Rule_map[infRules[recursions]]->andVars.push_back(" ");
+							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
+							///Rule_map[infRules[recursions]]->andVars.push_back(",");
 						}
+						//cout << " no 2" << endl;
 					}
 				}
 			}
@@ -188,17 +266,30 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				++res;	// increment which custom user argument we will look at, $X -> $Y
 				}
 		}
-		cout << endl;
+		if(printImmediately){
+			cout << endl;
+		}
 		Fact_map[leftHandSide]->printed = true;
+		Fact_map[leftHandSide]->readFacts = true;
 		}
 	}
 
 	if(Rule_map.count(leftHandSide) == 1){ //calls inference on rule's preds
 		if (Rule_map[leftHandSide]->get_logop() == "OR"){
-			//printImmediately = true;
 			cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
 				ofstream fstor;
 				for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
+					cout << "infVector " << *iter << endl;
+					////////////////////////////// The Following block lets us print the same fact multiple times if it
+					string resetPrint = "";		// appears multiple times in a rule. 
+					stringstream iss (*iter);
+					getline(iss,resetPrint,'(');
+					//cout << "printed? " << resetPrint << endl;
+					if (Fact_map.count(resetPrint) ==1){
+						Fact_map[resetPrint]->printed = false;			
+					}
+					//////////////////////////////
+					
 					fstor.open("write.txt");
 					fstor << *iter;	///cout << *iter << endl;
 					fstor << '\n';
@@ -211,6 +302,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
 				// call a new function that does cool stuff
 				// iterate thru RuleVector of this rule, We wanna get $X's and $Y's 
+				cout << "adding stuff to vector" << endl;
 				for(auto iter = Rule_map[leftHandSide]->RuleVector.begin(); iter != Rule_map[leftHandSide]->RuleVector.end(); ++iter){
 					for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2){ // iterating thru p_vector
 						vector<string> dollarVars;
@@ -221,29 +313,222 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 								dollarVars.push_back(*iter3);
 							}
 						}
-						Rule_map[leftHandSide]->dollarVarsVec.push_back(dollarVars);
-						dollarVars.clear();
+						Rule_map[leftHandSide]->dollarVarsVec.push_back(dollarVars); // put little vectors in big one
+						dollarVars.clear();	// clear little vector for next loop
 					cout << '\t';
 					}
 				}
-				
+				cout << endl;
 				ofstream fstor;
 				for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
+					////////////////////////////// The Following block lets us print the same fact multiple times if it
+					string resetPrint = "";		// appears multiple times in a rule. 
+					stringstream iss (*iter);
+					getline(iss,resetPrint,'(');
+					if (Fact_map.count(resetPrint) ==1){
+						Fact_map[resetPrint]->printed = false;
+					}
+					//////////////////////////////
+					cout << "gonna inf this  " << *iter << endl;
 					fstor.open("write.txt");
-					fstor << *iter;	///cout << *iter << endl;
+					fstor << *iter; //cout << *iter << endl;
 					fstor << '\n';
 					fstor.close();
 					inference("write.txt");
 				}
 				
-				
-				
-				cout << endl << "printing from newly made vector:" << endl;
+				cout << endl << "printing from newly made dollarVarsVec:" << endl;
 				for(auto iter = Rule_map[leftHandSide]->dollarVarsVec.begin(); iter != Rule_map[leftHandSide]->dollarVarsVec.end(); ++iter){
 					for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2)
 						cout << *iter2 << " ";
 				}
+				cout << endl;
+				//cout << "LHS at end: " << leftHandSide << endl; // GrandFather
+				//for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
+				//}
+				///cout << "predNames of " << Rule_map[leftHandSide];
 				
+				for(auto iter = Rule_map[leftHandSide]->predNames.begin(); iter != Rule_map[leftHandSide]->predNames.end(); ++iter){
+					 cout << "Rule or Fact andVars vector: " << *iter << '\t';
+					 // print out Father's andvars
+					 if (Rule_map.count(*iter) ==1){
+						 //cout << "rule" << endl;
+						for (auto iter2 = Rule_map[*iter]->andVars.begin(); iter2 != Rule_map[*iter]->andVars.end(); ++iter2){
+							cout << *iter2;
+						}
+					 } else if (Fact_map.count(*iter) ==1){
+						 //cout << "fact" << endl;
+						for (auto iter2 = Fact_map[*iter]->andVars.begin(); iter2 != Fact_map[*iter]->andVars.end(); ++iter2){
+							cout << *iter2;
+						}
+					 }
+					 cout << endl;
+				}
+				cout << endl;
+				vector<string> VARVECTOR;
+				//vector<string> VARVECTOR2;
+				string VARSTRING;
+				string VARSTRING2;
+				string VAR = "";
+				int i =0;
+				for(auto iter = Rule_map[leftHandSide]->predNames.begin(); iter != Rule_map[leftHandSide]->predNames.end(); ++iter){
+					if (Rule_map.count(*iter) == 1){ // rule
+						for (auto iter2 = (Rule_map[*iter])->andVars.begin(); iter2 != (Rule_map[*iter])->andVars.end(); ++iter2){
+							++i;
+							VARSTRING += (*iter2);
+							if (i==2){
+								VARVECTOR.push_back(VARSTRING);
+								i=0;
+								VARSTRING = "";
+							}
+						}
+					 } else if (Fact_map.count(*iter) == 1){ // fact
+						for (auto iter2 = Fact_map[*iter]->andVars.begin(); iter2 != Fact_map[*iter]->andVars.end(); ++iter2){
+							++i;
+							VARSTRING += (*iter2);
+							if (i==2){
+								VARVECTOR.push_back(VARSTRING);
+								i=0;
+								VARSTRING = "";
+							}
+						}
+					 }
+
+					if(VARVECTOR.size() > 0) {cout << "VARVECTOR: ";}
+					for( auto iter = VARVECTOR.begin(); iter != VARVECTOR.end(); ++iter){
+						cout << *iter;
+					}
+					cout << endl;
+					//<< "infRules[0]: " << infRules[0] << endl;
+					Rule_map[infRules[0]]->Results.push_back(VARVECTOR);
+					VARVECTOR.clear();	// MAKE SURE TO CLEAR VARVECTOR FOR EACH NEW LOOOOPER
+				}
+				 
+				int j = 0;
+				for(auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end(); ++it){
+					//cout << "predname: " << Rule_map[infRules[0]]->predNames[j] << endl;
+					if(Rule_map.count(Rule_map[infRules[0]]->predNames[j]) == 1 || Fact_map.count(Rule_map[infRules[0]]->predNames[j]) == 1){
+						cout << Rule_map[infRules[0]]->predNames[j] << ": ";
+					}
+					for(auto it2 = it->begin(); it2 != it->end(); ++it2){
+						cout << *it2 << " ";
+					}
+					++j;
+					cout << endl;
+				}
+				
+				for (auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end(); ++it){
+					for (auto it2 = it->begin(); it2 != it->end(); ++it2){
+						*it2;
+						++it;
+						for (auto it3 = it->begin(); it3 != it->end(); ++it3){
+							if(*it2 == *it3) { cout << " ITS A MATCHJH " << *it2 << " == " << *it3 << endl;}
+						}
+						--it;
+					}
+				}
+				
+				
+			
+				
+				/*
+				for( auto iter = VARVECTOR.begin(); iter != VARVECTOR.end(); ++iter){
+					cout << "SEARCHING FOR " << *iter << " IN VECTOR2" << endl;
+					for (auto iter2 = VARVECTOR2.begin(); iter2 != VARVECTOR2.end(); ++iter2){
+						if (*iter == *iter2) {
+							cout << "OH SHIT " << *iter << " == " << *iter2 << endl;
+							--iter;
+							++iter2;
+							cout << "FINAL RESULTS OF THE RULE: " << endl;
+							
+							string editString="";
+							for (int c = 0; c < (*iter).length(); c++){
+								if(c==0){
+									//cout<<(*iter)[c];
+									editString += (*iter)[c];
+								} else if (c==1){
+									//cout<<(*iter)[c]<<": ";	
+									editString += ((*iter)[c]);
+									editString += (": ");
+								}
+								else {
+									//cout<<(*iter)[c];
+									editString += (*iter)[c];
+								}
+								
+							}cout<<'\t'<< editString << '\t';
+							
+							editString = "";
+							for (int c = 0; c < (*iter2).length(); c++){ // change when we remove hardcoded make a loops
+								if(c==0){
+									//cout<<(*iter2)[c];
+									editString += (*iter2)[c];
+								} else if (c==1){
+									//cout<<(*iter2)[c]<<": ";
+									editString += ((*iter2)[c]);
+									editString += (": ");
+								}
+								else {
+									//cout<<(*iter2)[c];
+									editString += (*iter2)[c];
+								}
+								
+							}cout<<'\t'<< editString << '\t' << endl;
+							
+							
+							//cout << *iter << '\t' << *iter2 << endl;
+							++iter;
+							--iter2;
+							}
+						else {}//{cout << "no findo";}
+					}
+				}
+				*/
+				
+				
+				cout << "seggy" << endl;
+				//auto itsearch = VARVECTOR.begin();
+				/*
+				for (auto ittarget = VARVECTOR.begin(); ittarget != VARVECTOR.end(); ++ittarget){
+					if(*ittarget != ""){
+					if((*ittarget)[0] == '$'){
+						cout << "ittarget: " << *ittarget << " ";
+						//if(*itsearch != "|"){itsearch = find(VARVECTOR.begin(),VARVECTOR.end(),"|");}
+						auto itsearch = find(VARVECTOR2.begin(),VARVECTOR2.end(),*ittarget);
+						if (itsearch != VARVECTOR2.end() && *(++itsearch) == *(++ittarget)){
+							cout << "itsearch found" << *ittarget << endl;
+							//++ittarget;
+							//auto pos = itsearch - VARVECTOR2.begin() ;
+							//cout << "pos " << pos << endl;
+							//itsearch = find(VARVECTOR2.begin()+pos,VARVECTOR2.end(),*ittarget);
+							if(itsearch != VARVECTOR2.end()){
+								cout << *ittarget << " matches something" << endl;
+								ittarget -= 3;
+								cout << *ittarget << ": ";
+								++ittarget;
+								cout << *ittarget;
+								ittarget += 2;
+								
+								++itsearch;
+								cout << *itsearch << ": ";
+								++itsearch;
+								cout << *itsearch << ": ";
+								cout << endl;
+							}
+						} else{ cout << endl;}
+					if(itsearch != VARVECTOR.end()){cout << "WOW" << *ittarget << "==" << *itsearch << endl;}
+					
+					}
+					}
+				}
+				*/
+				cout << endl << "seggy" << endl;
+				
+				
+				
+				
+				
+				Rule_map[leftHandSide]->dollarVarsVec.clear(); // clear the vector for next inf of same rule
 				
 			}
 		}
@@ -495,13 +780,15 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 					first_vector.push_back(temp);			
 				}
 				p_vector.push_back(first_vector);
-				while(getline(iss,data,' ')){
+				while(getline(iss,data,' ')){	// data is stuff like Father($X,$Y)
+					//cout << "data" << data << endl;
 					Rule_map[name3]->infVector.push_back(data); ///NEW, do for if rule exists!!!
 				stringstream iss4(data);
 				getline(iss4,predName,'(');
+					Rule_map[name3]->predNames.push_back(predName); /// NEW
 				vector<string> second_vector;
 				second_vector.push_back(predName);
-				//cout << "predName " << predName << endl;
+				///cout << "predName " << predName << endl;
 				(getline(iss4,rightHandSide,')'));
 				stringstream iss5(rightHandSide);
 				while(getline(iss5,preds,',')){
@@ -530,6 +817,7 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 					Rule_map[name3]->infVector.push_back(data); /// NEW
 				stringstream iss4(data);
 				getline(iss4,predName,'(');
+					Rule_map[name3]->predNames.push_back(predName); /// NEW
 				vector<string> second_vector;
 				second_vector.push_back(predName);
 				//cout << "predName " << predName << endl;

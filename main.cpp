@@ -43,16 +43,20 @@ void LineIn(Manipulator *M, string str, bool *done){
 				s = "write.txt";
 				fstor << k;
 				fstor.close();
+				
 				M->inference(s);
 				
 				/// make the following a function
 				for (auto it = M->Fact_map.begin(); it != M->Fact_map.end();++it){
 					///cout << " iterating theu map of facts ";
 					it->second->printed = false;
+					it->second->readFacts = false;
+					it->second->andVars.clear();
 				}
 				for (auto it = M->Rule_map.begin(); it != M->Rule_map.end();++it){
 					///cout << " iterating theu map of Rules ";
 					it->second->firstInference = true;
+					it->second->andVars.clear();
 				}
 				/*
 				/// fix this to work with userArgs
@@ -66,7 +70,10 @@ void LineIn(Manipulator *M, string str, bool *done){
 				*/
 	
 				M->infRules.erase(M->infRules.begin(), M->infRules.end());
+				//M->andVarsVec.clear();
+				//M->andVarsVec.erase(M->andVarsVec.begin(), M->andVarsVec.end());
 				M->printImmediately = true;
+				M->recursions = -1;
 				//cout << "~query issued~" <<endl;
 			break;
 		case 'M':	// if(command == "DUMP")
@@ -75,6 +82,11 @@ void LineIn(Manipulator *M, string str, bool *done){
 			break;
 		case 'I':	// if(command == "EXIT")
 			*done = true;
+			break;
+		case ' ':
+			for(int i=0; i < 80; ++i){
+				cout << endl;
+			}
 			break;
 		default: 
 				cout << "not a valid command" << endl;
