@@ -20,6 +20,7 @@ void Manipulator::dumpRules(ostream &os){
 		os << it->second;
     }
 }
+
 void Manipulator::dump(){
 	ofstream fout;
 	fout.open("output.txt");
@@ -77,6 +78,9 @@ void Manipulator::inference(string filename){
 }
 
 void Manipulator::nofilter(string leftHandSide, string edited, vector<string> varVec){	// Inferencing FUNCTION for ($X,$Y) type rules and facts
+	int threadID = tCount;
+	//cout<<"THREAD COUNT: "<< tvec.capacity() << endl;
+	if(threadID > 0) cout << "Thread " << threadID << " started" << endl;
 	//cout << "leftHandSide: " << leftHandSide << "edited: " << edited << endl; // debugging
 	//cout << "printImmediately: " << printImmediately << endl;	// debugging
 	if(Fact_map.count(leftHandSide) == 1){
@@ -88,7 +92,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 		recursions++; // keep track of how many Rules deep we have recursed into inference
 		if (Rule_map[leftHandSide]->firstInference == true){
 			infRules.push_back(leftHandSide);
-			cout << "pushed back " << leftHandSide << endl; // debugging
+			//cout << "pushed back " << leftHandSide << endl; // debugging
 			Rule_map[leftHandSide]->userArgs = varVec;
 			Rule_map[leftHandSide]->firstInference = false;
 		}
@@ -97,7 +101,9 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 	stringstream iss(edited); // edited is an edited version of the thing we are inferencing
 	getline(iss,leftHandSide,'(');
 	if(Fact_map.count(leftHandSide) == 1){
-		if(Fact_map[leftHandSide]->printed == true){cout << "alrady printed :P" << endl;} // debugging
+		if(Fact_map[leftHandSide]->printed == true){
+			//cout << "alrady printed :P" << endl;
+		} // debugging
 		else{
 		string subjects="";
 		while(getline(iss,subjects,',')){ // subjects has the vars like  X Y for Father
@@ -110,6 +116,8 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 		int total=0;  //
 		int res=0;
 		bool stopCount = false; // stop the count when we've reached a number equal to the number of vars like $X $Y is 2
+		mtx.lock();
+		//cout<< "locked!"<<endl;
 		for(auto iter = Fact_map[leftHandSide]->vstring.begin(); iter != Fact_map[leftHandSide]->vstring.end(); ++iter){
 			if(*iter == "|"){	// the separator between facts tells us when to stop counting vars
 				if(printImmediately){ // printImmediately is it's a fact or an OR rule
@@ -216,6 +224,8 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				++res;	// increment which custom user argument we will look at, $X -> $Y
 				}
 		}
+		//		cout<<endl<<"unlocked!";
+		mtx.unlock();
 		if(printImmediately){
 			cout << endl;
 		}
@@ -226,11 +236,11 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 
 	if(Rule_map.count(leftHandSide) == 1){ //calls inference on rule's preds
 		if (Rule_map[leftHandSide]->get_logop() == "OR"){	// OR rule
-			cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
+			//cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
 				ofstream fstor;
 				//	iterating thru infVector which holds the Rule's right hand predicates, like Father($X,$Z) Parent($Z,$Y)
 				for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
-					cout << "infVector " << *iter << endl;
+					//cout << "infVector " << *iter << endl;
 					////////////////////////////// The Following block lets us print the same fact multiple times if it
 					string resetPrint = "";		// appears multiple times in a rule. 
 					stringstream iss (*iter);
@@ -244,13 +254,16 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 					fstor << *iter;	///cout << *iter << endl;	// put the predicates into a file
 					fstor << '\n';
 					fstor.close();
-					inference("write.txt");	//call inference recursively on the file
+					//inference("write.txt");	//call inference recursively on the file
+					tvec.push_back(thread(&Manipulator::inference,this,"write.txt"));
+					tCount++;
+					tvec.back().join();
 				}
 			}
 			
 			else if (Rule_map[leftHandSide]->get_logop() == "AND"){ // AND rule
 				printImmediately = false; // in this case only we will not print the results Immediately
-				cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl; // debugging
+				//cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl; // debugging
 				// iterate thru RuleVector of this rule, We wanna get $X's and $Y's 
 				cout << "adding stuff to vector" << endl;
 				for(auto iter = Rule_map[leftHandSide]->RuleVector.begin(); iter != Rule_map[leftHandSide]->RuleVector.end(); ++iter){
@@ -439,6 +452,9 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				
 			}
 		}
+	
+	if(threadID > 0) cout << "Thread " << threadID << " completes" << endl;
+	
 }
 
 void Manipulator::factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec){
@@ -658,7 +674,6 @@ void Manipulator::makeVecs(string rule, vector<string> &variables, vector<string
 		}
 	}
 }
-
 
 void Manipulator::load(string filename){
 ifstream readFile(filename);
