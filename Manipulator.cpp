@@ -226,11 +226,11 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 
 	if(Rule_map.count(leftHandSide) == 1){ //calls inference on rule's preds
 		if (Rule_map[leftHandSide]->get_logop() == "OR"){	// OR rule
-			cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
+			//cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl;
 				ofstream fstor;
 				//	iterating thru infVector which holds the Rule's right hand predicates, like Father($X,$Z) Parent($Z,$Y)
 				for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
-					cout << "infVector " << *iter << endl;
+					//cout << "infVector " << *iter << endl;
 					////////////////////////////// The Following block lets us print the same fact multiple times if it
 					string resetPrint = "";		// appears multiple times in a rule. 
 					stringstream iss (*iter);
@@ -250,9 +250,9 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 			// AND ----------- AND ----------- AND ------------- AND --------------- AND
 			else if (Rule_map[leftHandSide]->get_logop() == "AND"){ // AND rule
 				printImmediately = false; // in this case only we will not print the results Immediately
-				cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl; // debugging
+				//cout << "GOT LOGOP: " << Rule_map[leftHandSide]->get_logop() << endl; // debugging
 				// iterate thru RuleVector of this rule, We wanna get $X's and $Y's 
-				cout << "adding stuff to vector" << endl;
+				//cout << "adding stuff to vector" << endl;
 				for(auto iter = Rule_map[leftHandSide]->RuleVector.begin(); iter != Rule_map[leftHandSide]->RuleVector.end(); ++iter){
 					for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2){ // iterating thru p_vector
 						vector<string> dollarVars;
@@ -264,17 +264,17 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						//cout << *iter3 << " ";
 							//else if(Rule_map.count(*iter3) == 1){factGroup = true;} // if it's a rule
 							if(((*iter3)[0] == '$') && factGroup){ // if the string is a '$' variable     && (factGroup==true)
-								cout << *iter3 << " ";
+								//cout << *iter3 << " ";
 								dollarVars.push_back(*iter3);
 							}
 							//factGroup = false;
 						}
 						Rule_map[leftHandSide]->dollarVarsVec.push_back(dollarVars); // put little vectors in big one
 						dollarVars.clear();	// clear little vector for next loop
-					cout << '\t';
+					//cout << '\t';
 					}
 				}
-				cout << endl;
+				//cout << endl;
 				ofstream fstor;
 				for(auto iter = Rule_map[leftHandSide]->infVector.begin(); iter != Rule_map[leftHandSide]->infVector.end(); ++iter){
 					////////////////////////////// The Following block lets us print the same fact multiple times if it
@@ -285,7 +285,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						Fact_map[resetPrint]->printed = false;
 					}
 					//////////////////////////////
-					cout << "gonna inf this  " << *iter << endl;
+					//cout << "gonna inf this  " << *iter << endl;
 					fstor.open("write.txt");
 					fstor << *iter; //cout << *iter << endl;
 					fstor << '\n';
@@ -293,30 +293,30 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 					inference("write.txt");
 				}
 				
-				cout << endl << "printing from newly made dollarVarsVec:" << endl;	// check what is in dollarVarsVec for debugging
-				for(auto iter = Rule_map[leftHandSide]->dollarVarsVec.begin(); iter != Rule_map[leftHandSide]->dollarVarsVec.end(); ++iter){
-					for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2)
-						cout << *iter2 << " ";
-				}
-				cout << endl;
+				//cout << endl << "printing from newly made dollarVarsVec:" << endl;	// check what is in dollarVarsVec for debugging
+				//for(auto iter = Rule_map[leftHandSide]->dollarVarsVec.begin(); iter != Rule_map[leftHandSide]->dollarVarsVec.end(); ++iter){
+					//for(auto iter2 = iter->begin(); iter2 != iter->end(); ++iter2)
+						//cout << *iter2 << " ";
+				//}
+				//cout << endl;
 				//cout << "LHS at end: " << leftHandSide << endl; // GrandFather
 				///cout << "predNames of " << Rule_map[leftHandSide];
 				
 				for(auto iter = Rule_map[leftHandSide]->predNames.begin(); iter != Rule_map[leftHandSide]->predNames.end(); ++iter){
-					 if (*iter != ""){cout << "Rule or Fact andVars vector: " << *iter << '\t';}
+					// if (*iter != ""){cout << "Rule or Fact andVars vector: " << *iter << '\t';}
 					 // print out Father's andvars
 					 if (Rule_map.count(*iter) ==1){	//cout << "rule" << endl;
 						for (auto iter2 = Rule_map[*iter]->andVars.begin(); iter2 != Rule_map[*iter]->andVars.end(); ++iter2){
-							cout << *iter2;
+							//cout << *iter2;
 						}
 					 } else if (Fact_map.count(*iter) ==1){	//cout << "fact" << endl;
 						for (auto iter2 = Fact_map[*iter]->andVars.begin(); iter2 != Fact_map[*iter]->andVars.end(); ++iter2){
-							cout << *iter2;
+							//cout << *iter2;
 						}
 					 }
-					 cout << endl;
+				//cout << endl;
 				}
-				cout << endl;
+				//cout << endl;
 				
 				vector<string> VARVECTOR; // temporary vector to store VARSTRING's, this VARVECTOR will get pushed into a rule object's Results vector of vectors
 				string VARSTRING; // temporary string that stores the data from a fact/rule's andVar
@@ -344,8 +344,8 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						}
 					 }
 
-					if(VARVECTOR.size() > 0) {cout << "VARVECTOR: ";}	// print out the VARVECTOR for debugging
-					for(string s :  VARVECTOR){cout << s << " ";} cout<<endl;
+					//if(VARVECTOR.size() > 0) {cout << "VARVECTOR: ";}	// print out the VARVECTOR for debugging
+					//for(string s :  VARVECTOR){cout << s << " ";} cout<<endl;
 					
 					//<< "infRules[0]: " << infRules[0] << endl; // debugging
 					Rule_map[infRules[0]]->Results.push_back(VARVECTOR); // VARVECTOR pushed into a rule object's Results vector of vectors
@@ -354,17 +354,17 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				//cout << "segg" << endl; // debugging
 				 
 				int j = 0;
-				cout << "infRules[0]: " << infRules[0] << endl;;
+				//cout << "infRules[0]: " << infRules[0] << endl;;
 				for(auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end(); ++it){
 					//cout << "predname: " << Rule_map[infRules[0]]->predNames[j] << endl;
 					if(Rule_map.count(Rule_map[infRules[0]]->predNames[j]) == 1 || Fact_map.count(Rule_map[infRules[0]]->predNames[j]) == 1){
-						cout << Rule_map[infRules[0]]->predNames[j] << ": ";
+						//cout << Rule_map[infRules[0]]->predNames[j] << ": ";
 					}
 					for(auto it2 = it->begin(); it2 != it->end(); ++it2){
-						cout << *it2 << " ";
+						//cout << *it2 << " ";
 					}
 					++j;
-					cout << endl;
+					//cout << endl;
 				}
 				
 				/// Searching for matches
@@ -373,14 +373,14 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						for (auto it2 = it->begin(); it2 != it->end(); ++it2){
 							for (auto it3 = it1->begin(); it3 != it1->end(); ++it3){
 								if(distance(it->begin(), it2) == distance(it1->begin(), it3)){}
-								else if(*it2 == *it3) { cout << " MATCH: " << *it2 << " == " << *it3 << endl;}
-								else {cout << "-";}
+								//else if(*it2 == *it3) { cout << " MATCH: " << *it2 << " == " << *it3 << endl;}
+								//else {cout << "-";}
 							}
 						}
 					}
 				}
 				
-				cout << "Results vector: " <<endl;
+				/*cout << "Results vector: " <<endl;
 				for(vector<string> v : Rule_map[infRules[0]]->Results){
 					for(string s : v){
 						cout << s << " ";
@@ -389,7 +389,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				}
 				cout << endl;
 				
-				
+				*/
 				// trash removal
 				int rVecIndex = 0;
 				for (auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end()-1; ++it){
@@ -410,15 +410,15 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 										MatchVar = true;
 									}
 									//if(*it2 == *it3) { cout << " ITS A MATCH " << *it2 << " == " << *it3 << endl;}
-									//cout << "seggyloop" << endl;
+									
 								}
 								bool varNeeded = false;
 								for (auto it3 = it1->begin(); it3 != it1->end(); ++it3){
 									if(MatchVar){ // if this vector has the $ variable we want
 										if((*it2)[1] == (*it3)[1]){
 											if((*it2) == (*it3)){
-												cout <<  (*it2) << " "<<(*it3)<< "--";
-												cout << (*it2)[1] << " is in vector"<<endl;
+												//cout <<  (*it2) << " "<<(*it3)<< "--";
+												//cout << (*it2)[1] << " is in vector"<<endl;
 												varNeeded = true;
 												
 											}
@@ -427,7 +427,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 									}
 									
 								}
-								if(!varNeeded && MatchVar){ // if the string wasn't found
+								/*if(!varNeeded && MatchVar){ // if the string wasn't found
 									cout << (*it2) << " wasn't needed"<< endl;
 									string useless = (*it2);
 									int loopcount = 0;
@@ -446,7 +446,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 										
 									}
 									cout << "finished erasing"<<endl;
-								}
+								}*/
 								
 								
 								
@@ -457,7 +457,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						rowLoop++;
 					}
 				}
-				cout << "Results vector UPDATED: " <<endl;
+				/*cout << "Results vector UPDATED: " <<endl;
 				for(vector<string> v : Rule_map[infRules[0]]->Results){
 					for(string s : v){
 						cout << s << " ";
@@ -465,7 +465,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 					cout<<endl;
 				}
 				cout << endl;
-				
+				*/
 				vector<string> tVar = Rule_map[leftHandSide]->RuleVector[0][0];
 				tVar.erase(tVar.begin());
 				/*cout<<"Is this the vector? ";
@@ -494,7 +494,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						//cout<<"pushing back: " << Rule_map[infRules[0]]->Results[0][index+oS] << endl;
 					}
 					AND(tVar, group, Rule_map[infRules[0]]->Results, 1,0);
-					cout << endl;
+					//cout << endl;
 				}
 					
 				//printAnd(printResults, tVar, Rule_map[infRules[0]]->Results);
@@ -508,6 +508,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 }
 
 void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind){ //put in h file
+	// debuggind/ informational stuff:
 	//cout << endl << "index: " << ind;
 	/*cout << endl << "tVar: ";
 	for(string s : tVar){
@@ -559,7 +560,7 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 						}
 						//cout << "pushing " << group[compare]<<endl;
 						output.push_back(group[compare]); //----
-						cout << " ";
+						//cout << " ";
 						//cout << "erasing "<<tVar[var][1]<<endl;
 						tVar.erase(tVar.begin() + var);
 						
@@ -629,7 +630,7 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 									//cout << Results[inc][offset+index][out];
 								}
 								output.push_back(Results[inc][offset+index]);
-								cout << " ";
+								//cout << " ";
 								tVar.erase(tVar.begin() + var);
 							}
 						}
@@ -666,7 +667,7 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 						
 						int temp = row+1;
 						
-						AND(tVar, group, Results, temp,index);
+						AND(tVar, group, Results, temp,ind);
 						
 					}
 					
@@ -1064,100 +1065,3 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 		}
 	}
 }
-/*for (auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end()-1; ++it){
-					int rowLoop = 0;
-					for(auto it1 = Rule_map[infRules[0]]->Results.begin() + 1; it1 != Rule_map[infRules[0]]->Results.end(); ++it1){
-						for (auto it2 = it->begin(); it2 != it->end(); ++it2){
-							//cout<<"it2++"<<endl;
-							for (auto it3 = it1->begin(); it3 != it1->end(); ++it3){
-								
-								if((*it2) == (*it3)) {
-									// if any in the group match the vars we want to cout
-									int groupSize = 0;
-									char t = (*it2)[1];
-									for (auto itt = it->begin(); itt != it->end(); ++itt){
-										char tt = ((*itt)[1]);
-											while(t != (*itt)[1]){
-												//cout <<"itt: "<<((*itt)[1])<<endl;
-												itt++;
-												groupSize++;
-											}
-									}
-									//int c = 0;
-									
-									cout<<"groupSize: " << groupSize<<endl;
-									
-									
-									int loopcount=0;
-									// for each var we want to print (x, y)
-									//for(string s : tVar){
-										// go through the vector
-										/// Searching for matches
-										for (auto it = Rule_map[infRules[0]]->Results.begin(); it != Rule_map[infRules[0]]->Results.end()-1; ++it){
-											for(auto it1 = Rule_map[infRules[0]]->Results.begin() + 1; it1 != Rule_map[infRules[0]]->Results.end(); ++it1){
-												//for(string s : tVar){
-													for (auto it2 = it->begin(); it2 != it->end(); ++it2){
-														int count = 0;
-														cout <<"count: "<< ++count << endl;
-														for(string s : tVar){
-															for (auto it3 = it1->begin(); it3 != it1->end(); ++it3){
-																if(distance(it->begin(), it2) == distance(it1->begin(), it3)){}
-																else if(*it2 == *it3) {
-																	for(int offset = 0; offset < groupSize; offset++){
-																		//cout<<"offset: "<<offset<< "(loopcount%groupSize): "<<(loopcount%groupSize)<<endl;
-																		vector<string> done;
-																		bool varDone = false;
-																			for(string d : done){
-																				if (s == d){
-																					varDone = true;
-																				}
-																			}
-																			// cout << "rowLoop: "<<rowLoop<< " complex: "<<loopcount-(loopcount%groupSize)+offset<<endl;
-																			if(s[1] == (Rule_map[infRules[0]]->Results[rowLoop][(loopcount-(loopcount%groupSize)+offset)][1]) && !varDone){
-																				//cout << "checking [1]"<<endl;
-																				
-																				cout << s[1] << ": ";
-																				done.push_back(s);
-																				
-																				//for(int st = 2; st < (*it2).length(); st++){
-																					for(int i = 2; i < Rule_map[infRules[0]]->Results[rowLoop][(loopcount-(loopcount%groupSize)+offset)].size(); i++){
-																						cout<<Rule_map[infRules[0]]->Results[rowLoop][(loopcount-(loopcount%groupSize)+offset)][i];
-																					}
-																					//cout << Rule_map[infRules[0]]->Results[rowLoop][(loopcount-(loopcount%groupSize)+offset)];
-																					cout << " ";
-																				//}
-																				cout << " ";
-																				varDone = true;
-																				
-																			}
-																			//s = "";
-																		//}
-																//cout << "item: " << Rule_map[infRules[0]]->Results[rowLoop][(loopcount-(loopcount%groupSize))]<<endl;
-																	}loopcount++;
-																}
-																
-															}//loopcount++;
-														}
-													}
-												//}
-											}
-										}
-								}
-								//else {cout << "-";}
-							}cout<<endl;
-							
-						}
-						rowLoop++;
-						
-					}
-				}*/
-				/*for the new results vector (its smaller now, and correct)
-					from rulevector: Save that GF couts X and Y
-					for each group of $ Variables etc.:
-						if its from the rulevector (if its what we want to cout)
-							cout << $ Variable: Name << endl;
-						find all the instances they match in each result vector
-							check the surrounding $variables in the group for the ones you want to cout
-				*/
-				
-				//Rule_map[leftHandSide]->RuleVector[0][0][1-end]
