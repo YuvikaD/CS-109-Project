@@ -20,7 +20,15 @@ class Manipulator {
 	string data;		// the params of the Fact, like "Allen"
 	string preds;
 	
+	
 	public:
+	//vector<string> andVars;
+	int recursions=-1;
+	
+	vector<vector<string>> andVarsVec;
+	void printAnd(vector<vector<string>> printResults, vector<string> tVar, vector<vector<string>> Results);
+	bool printImmediately = true;
+	vector<string> infRules;
 	vector<vector<string>> rawPredicates;
 	map<string,Fact*> Fact_map;
 	map<string,Rule*> Rule_map;
@@ -30,7 +38,11 @@ class Manipulator {
 	void dump();
 	void load(string filename);
 	void inference(string filename);
-	void evaluate(string line, Rule * rule, map<string,Fact*> fmap, map<string,Rule*> rmap);
+	void nofilter(string leftHandSide,string edited, vector<string> varVec);
+	void factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec);
+	void ruleFilter(string rule, map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
+	void makeVecs(string rule, vector<string> &variables, vector<string> &factNames,map<string,Rule*> rmap);
+	void AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind);
 	Manipulator();
 	~Manipulator();
 };
