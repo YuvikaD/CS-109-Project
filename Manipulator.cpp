@@ -862,3 +862,20 @@ while(getline(readFile,line)){	// read from input file, put contents into 'line'
 		}
 	}
 }
+void Manipulator::clean(){
+	/// resets variables and containters for the next call to inference
+	for (auto it = Fact_map.begin(); it != Fact_map.end();++it){
+		it->second->printed = false;
+		it->second->readFacts = false;
+		it->second->andVars.clear();
+	}
+	for (auto it = Rule_map.begin(); it != Rule_map.end();++it){
+		it->second->firstInference = true;
+		it->second->andVars.clear();
+		it->second->Results.clear();
+	}
+	infRules.erase(infRules.begin(), infRules.end());
+	infRules.clear();
+	printImmediately = true;
+	recursions = -1;
+}
