@@ -412,11 +412,22 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 	if(threadID > 0) cout << "Thread " << threadID << " completes" << endl;
 	
 }
+/*
+Paramters:
+tVar - contains the variables we want to print <$X,$Y>
+group - contains the names we are looking for in this iteration <$XAllen, $ZMargret>
+Results - contains all the results of the different rules, in a vector of vectors
+(row 1)Fathers:<$XAllen $ZMargret $XDean $ZLily $XCarl $ZMarcie $XRalph $ZRyan $XRalph $ZSarah $XRaphaelsDad $ZRaphael $XRaphael $ZRalph>
+(row 2)Parents:<$ZAllen $YMargret $ZDean $YLily $ZCarl $YMarcie $ZRalph $YRyan $ZRalph $YSarah $ZRaphaelsDad $YRaphael $ZRaphael $YRalph $ZMargret $YBob $ZMarcie $YSarah $ZMarcie $YRyan
+>
+row - the row we are in
+ind - the index in the Results vector this group is at
+*/
 void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind){
-	vector<string> tVarSave = tVar;
+	vector<string> tVarSave = tVar; // saves this vector so that we can delete from it but not really lose info 
 	for (int inc = row; inc < Results.size(); inc++){ // going through each main row
-	vector<string> output;
-		int groupSize = 1;
+	vector<string> output; // output vector we will push_back stuff into that we want to print
+		int groupSize = 1; // we want to find the group size so we can iterate through each group without going into the next group
 		char var = Results[inc][0][1];
 		int it = 1;
 		while(var != Results[inc][it][1]){ // finds the size of the group (X,Y) = a groupsize of 2
@@ -425,34 +436,35 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 		}
 		//going through each smaller row:
 		for(int index = ind; index <= Results[inc].size()-groupSize; index+=groupSize){
-			
 			bool correct = true;
 			// look for things from our group (fist one would be Allen,Margret)
 			for (int compare = 0; compare < group.size(); compare++){ // for each thing the group,
 				correct = true;
-				for(int var = 0; var < tVar.size(); var++){
+				for(int var = 0; var < tVar.size(); var++){ // for each thing in tVar ($X,$Y)
 					if (tVar[var][1] == group[compare][1]){ // if its something we want to print (if its X or Y - Allen is an X
-						stringstream ss;
+						stringstream ss; // $XAllen matches with X from tVar, so we add Allen to the output vector
 						string pushing;
-						char c = tVar[var][1];
+						char c = tVar[var][1]; // this stuff it just so we can push back a char
 						ss << c;
 						ss >> pushing;
 						output.push_back(pushing); 			// add Allen to the output vector
 						output.push_back(": ");
 						output.push_back(group[compare]);
-						tVar.erase(tVar.begin() + var);
+						tVar.erase(tVar.begin() + var); // erase 'X' from tVar because now we just want to look for the other variables
+						// we will now look for a Y
 						
 					}
 				}
+				// for each thing in the group, compare it with whats in Results
 				for(int offset = 0; offset < groupSize; offset++){
+					// if something in Results matches something in out group
 					if(Results[inc][offset+index][1] == group[compare][1]){ // if the variables match
 						// AND if the STRINGS match
 						if(Results[inc][offset+index] == group[compare]){
-							// do nothing i guess
-						} else {
+							// do nothing i guess?
+						} else { // if they don't match, change the boolean so we remember later
 							bool ok = true;
 							for(string s : tVar){ // checks if all the strings for a particular variable match,
-							// so we dont get a group with $ZRalph and $ZSarah
 								if(s[1] == Results[inc][offset+index][1]){
 									ok = false;
 								}
@@ -464,8 +476,10 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 					}
 				}
 				
-			}
+			} // if everything went ok, all the strings in that part of Results variable matched;
+			// (in our case this bool would only be true for the section with <$ZMargret,$YBob>)
 			if(correct){ // if the variables match and have the same strings,
+				// so for this run, tVar is still has Y so we do this next part
 				if(tVar.size()>0){ // we want to add this stuff to group and run AND again on the next row
 					for (int offset = 0; offset < groupSize; offset++){
 						bool ok = true;
@@ -476,35 +490,35 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 						}
 						if(ok){ // if we don't have it, add it to the vector
 							group.push_back(Results[inc][offset+index]);
-						}
+						} // now lets check if 
 						for(int var = 0; var < tVar.size(); var++){ // if its X or Y,
-							if (tVar[var][1] == Results[inc][offset+index][1]){
+							if (tVar[var][1] == Results[inc][offset+index][1]){ // this will be true for $YBob
 								stringstream ss;
 								string pushing;
 								char c=tVar[var][1];
 								ss << c;
-								ss >> pushing;// pretty sure this is where $YBob will get added
+								ss >> pushing;//this is where $YBob will get added
 								output.push_back(pushing); // push it into the output vector
 								output.push_back(": ");	
 								output.push_back(Results[inc][offset+index]);
-								tVar.erase(tVar.begin() + var);
+								tVar.erase(tVar.begin() + var); // erase $Y from tVar - now its empty
 							}
-						}
+						} // sincee tVar is now empty, we do the next part, printing
 						if(tVar.size() == 0){ // if the variable vector is empty (both X and Y have been found)
-							if(output.size()/3 %groupSize == 0){ //print it out
+							if(output.size()/3 %groupSize == 0){ // also, if the vector is completely full,
 								int tracker = 0;
-								for(int s = 0; s < output.size(); s++){
-									if(output[s].size() == 1){
-										cout << output[s];
-									}else if(output[s] == ": "){
-										cout << output[s];
-									} else{
+								for(int s = 0; s < output.size(); s++){ // loop to print correct format
+									if(output[s].size() == 1){ // if the size is 1
+										cout << output[s]; // prints variable
+									}else if(output[s] == ": "){ // if its a ": "
+										cout << output[s]; //print a :
+									} else{ // if its a string
 										for(int c = 2; c < output[s].size();c++){
-											cout << output[s][c];
+											cout << output[s][c]; // print it without the $X or $Y
 										}
 										cout << " ";
 									}
-									
+									// if were done printing, newline
 									if(tracker%groupSize == 2){
 										cout << endl;
 									}
@@ -512,10 +526,10 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 								}
 								cout << endl;
 							}
-							output.clear();
-							tVar = tVarSave; // reset the vector for the next group
+							output.clear(); // clear the vector so we can use it again
+							tVar = tVarSave; // reset the variables vector for the next group
 						}
-						int temp = row+1;
+						int temp = row+1;// increment to the next row
 						AND(tVar, group, Results, temp,ind); // continue searching, recursively
 						
 					}
