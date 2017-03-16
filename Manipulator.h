@@ -46,6 +46,7 @@ class Manipulator {
 	void factFilter(string FactInQ, map<string,Fact*> fmap, vector<string> argVec);
 	void ruleFilter(string rule, map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
 	void makeVecs(string rule, vector<string> &variables, vector<string> &factNames,map<string,Rule*> rmap);
+	void AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind);
 	void thread_OR();
 	Manipulator();
 	~Manipulator();
