@@ -21,10 +21,10 @@ class Manipulator {
 	string preds;
 	
 	public:
-	//vector<string> andVars;
 	int recursions=-1;
-	
+	string resultsInString;
 	vector<vector<string>> andVarsVec;
+	char outputArray [];
 	
 	vector<thread> tvec;
 	mutex mtx;
@@ -40,6 +40,7 @@ class Manipulator {
 	void dumpFacts(ostream &os);
 	void dumpRules(ostream &os);
 	void dump();
+	void LineIn(string str, bool *done);
 	void load(string filename);
 	void inference(string filename);
 	void nofilter(string leftHandSide,string edited, vector<string> varVec);
@@ -47,6 +48,7 @@ class Manipulator {
 	void ruleFilter(string rule, map<string,Rule*> rmap,map<string,Fact*> fmap, vector<string> argVec);
 	void makeVecs(string rule, vector<string> &variables, vector<string> &factNames,map<string,Rule*> rmap);
 	void AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind);
+	void clean();
 	void thread_OR();
 	Manipulator();
 	~Manipulator();
