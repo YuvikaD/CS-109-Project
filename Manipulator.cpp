@@ -1,6 +1,9 @@
 #include "Manipulator.h"
 using namespace std;
-Manipulator:: Manipulator(){}	// constructor
+Manipulator:: Manipulator(){
+	resultsInString= "";
+	outputArray[0] = '\0';
+}	// constructor
 Manipulator::~Manipulator(){}	// constructor 
 
 void Manipulator::drop(string name){
@@ -28,7 +31,75 @@ void Manipulator::dump(){
 	dumpRules(fout);
 }
 
+void Manipulator::LineIn(string str, bool *done){
+		string command;
+		string rest;
+		string k;
+		string s;
+		ofstream fstor;//create output file
+		stringstream iss(str);//create ss object
+		getline(iss, command, ' ');//parse first input for command
+		getline(iss, k);//parses rest of string and stores in rest
+		char c = str[2];
+		switch(c){
+		case 'L':	// if(command == "RULE")
+				cout << "Rule" << k << endl;
+				fstor.open("write.txt");
+				s = "write.txt";
+				fstor << k;//puts rest in file
+				fstor.close();
+				load(s);//calls load to check if R or F and puts data where it should go
+			break;
+		case 'C':	// if(command == "FACT")
+				//std::cout << "Fact " << k << endl;
+				//cout << command << endl;
+				cout << k << " INPUTTED" << endl;
+				
+				fstor.open("write.txt");
+				s = "write.txt";
+				fstor << k;
+				fstor.close();
+				load(s);
+			break;
+		case 'A':	// if(command == "LOAD")
+				 load(k);
+				cout << "Loaded" << endl;
+			break;
+		case 'O':	// if(command == "DROP")
+				 drop(k);
+				cout << "Dropped" << endl;
+			break;
+		case 'F':	// if(command == "INFERENCE")
+				fstor.open("write.txt");
+				s = "write.txt";
+				fstor << k;
+				fstor.close();
+				 inference(s);
+				 clean();
+				
+			break;
+		case 'M':	// if(command == "DUMP")
+				 dump();
+				cout << "~KB and RB dumped~" << endl;
+			break;
+		case 'I':	// if(command == "EXIT")
+			*done = true;
+			break;
+		//case ' ':
+		//	for(int i=0; i < 80; ++i){
+		//		cout << endl;
+		//	}
+			break;
+		default:
+				//cout << "not a valid command" << endl;
+				cout << k << endl;
+			break;
+		}
+}
+
+
 void Manipulator::inference(string filename){
+	cout << "WE IN INFERENCE!" << endl;
 	bool filter = false;	
 	string forFilter, temp, vars; // temp for storing stringstream data temporarily, vars for getting the default or user inputted vars $X $Y
 	vector<string> varVec; // for filtering
@@ -79,7 +150,7 @@ void Manipulator::inference(string filename){
 
 void Manipulator::nofilter(string leftHandSide, string edited, vector<string> varVec){	// Inferencing FUNCTION for ($X,$Y) type rules and facts
 	int threadID = tCount;
-	//cout<<"THREAD COUNT: "<< tvec.capacity() << endl;
+	cout<<"THREAD COUNT: "<< tvec.capacity() << endl;
 	if(threadID > 0) cout << "Thread " << threadID << " started" << endl;
 	//cout << "leftHandSide: " << leftHandSide << "edited: " << edited << endl; // debugging
 	//cout << "printImmediately: " << printImmediately << endl;	// debugging
@@ -115,6 +186,7 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 		int count=0; // 
 		int total=0;  //
 		int res=0;
+		
 		bool stopCount = false; // stop the count when we've reached a number equal to the number of vars like $X $Y is 2
 		mtx.lock();
 		//cout<< "locked!"<<endl;
@@ -133,9 +205,13 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						//cout << "seg fault? 5" << endl;
 						if(Rule_map[infRules[0]]->userArgs[res][0] == '$'){ // if it's a variable
 							if(printImmediately){
+								// resultsInString += Rule_map[infRules[0]]->userArgs[(total%res)];
+								// resultsInString += ": ";
+								// resultsInString += *iter;
+								// resultsInString += " ";
 								cout << Rule_map[infRules[0]]->userArgs[(total%res)] << ": " << *iter << " ";
 							} else{
-							//cout << "added in 1" << endl;
+							cout << "added in 1" << endl;
 							if(!Fact_map[leftHandSide]->readFacts){
 								Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->userArgs[(total%res)]);
 								Fact_map[leftHandSide]->andVars.push_back(*iter);
@@ -147,8 +223,12 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						//cout << "not 5" << endl; // this is where grandfather stuff is done
 						// if userArgs has anyhting in it, custom variables like $T,$y
 					}else if(Fact_map[leftHandSide]->userArgs.size()>0){	// ran it on a fact with custom args
-						//cout << " seg falut incoming? 4" << endl;
+						//cout << "seg falut incoming? 4" << endl;
 						if(printImmediately){
+							// resultsInString += Fact_map[leftHandSide]->userArgs[(total%res)] + ": " + *iter + " ";
+							// resultsInString += ": ";
+							// resultsInString += *iter;
+							// resultsInString += " ";
 							cout << Fact_map[leftHandSide]->userArgs[(total%res)] << ": " << *iter << " ";
 						} else{
 							//cout << "added in 2" << endl;
@@ -162,8 +242,12 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 						//cout << " no 4" << endl;
 					}			
 					else{
-						//cout << " seg falut incoming? 1" << endl;
+						//cout << "seg falut incoming? 1" << endl;
 						if(printImmediately){
+							// resultsInString += Fact_map[leftHandSide]->countVec[(total%count)-1]; 
+							// resultsInString += ": "; 
+							// resultsInString += *iter; 
+							// resultsInString += " ";
 							cout << Fact_map[leftHandSide]->countVec[(total%count)-1] << ": " << *iter << " "; 
 						} else{
 							///Fact_map[leftHandSide]->andVars.push_back(Fact_map[leftHandSide]->countVec[(total%count)-1]);
@@ -174,9 +258,13 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 					}
 				} else { // if total%count == 0
 					if(infRules.size() >= recursions){ // was > 0
-						//cout << "infRules " << infRules[0] << endl;
+						cout << "infRules " << infRules[0] << endl;
 						if (Rule_map[infRules[0]]->userArgs[res][0] == '$'){
 							if(printImmediately){
+								// resultsInString += Rule_map[infRules[0]]->userArgs[res];
+								// resultsInString += ": ";
+								// resultsInString += *iter;
+								// resultsInString += " ";
 								cout << Rule_map[infRules[0]]->userArgs[res] << ": " << *iter << " ";
 							} else{
 								//cout << "added in 3" << endl;
@@ -190,8 +278,12 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 							}
 						}
 					}else if(Fact_map[leftHandSide]->userArgs.size()>0){	// ran it on a fact with custom args
-						//cout << " seg falut incoming? 3" << endl;
+						//cout << "seg falut incoming? 3" << endl;
 						if(printImmediately){
+							// resultsInString += Rule_map[infRules[0]]->userArgs[res];
+							// resultsInString += ": ";
+							// resultsInString += *iter;
+							// resultsInString += " ";
 							cout << Fact_map[leftHandSide]->userArgs[count-1] << ": " << *iter << " ";
 						} else{
 							//cout << "added in 4" << endl;
@@ -204,8 +296,12 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 							Rule_map[infRules[recursions]]->andVars.push_back(*iter);
 						}
 					}else{
-						//cout << " seg falut incoming? 2" << endl;
+						//cout << "seg falut incoming? 2" << endl;
 						if(printImmediately){
+							// resultsInString += Fact_map[leftHandSide]->countVec[count-1];
+							// resultsInString += ": ";
+							// resultsInString += *iter;
+							// resultsInString += " ";
 							cout << Fact_map[leftHandSide]->countVec[count-1] << ": " << *iter<<" "; 
 						} else{
 							Rule_map[infRules[recursions]]->andVars.push_back(Rule_map[infRules[recursions]]->userArgs[count-1]);
@@ -224,9 +320,10 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 				++res;	// increment which custom user argument we will look at, $X -> $Y
 				}
 		}
-		//		cout<<endl<<"unlocked!";
+				//cout<<endl<<"unlocked!";
 		mtx.unlock();
 		if(printImmediately){
+			// resultsInString += '\n';	
 			cout << endl;
 		}
 		Fact_map[leftHandSide]->printed = true;
@@ -412,22 +509,11 @@ void Manipulator::nofilter(string leftHandSide, string edited, vector<string> va
 	if(threadID > 0) cout << "Thread " << threadID << " completes" << endl;
 	
 }
-/*
-Paramters:
-tVar - contains the variables we want to print <$X,$Y>
-group - contains the names we are looking for in this iteration <$XAllen, $ZMargret>
-Results - contains all the results of the different rules, in a vector of vectors
-(row 1)Fathers:<$XAllen $ZMargret $XDean $ZLily $XCarl $ZMarcie $XRalph $ZRyan $XRalph $ZSarah $XRaphaelsDad $ZRaphael $XRaphael $ZRalph>
-(row 2)Parents:<$ZAllen $YMargret $ZDean $YLily $ZCarl $YMarcie $ZRalph $YRyan $ZRalph $YSarah $ZRaphaelsDad $YRaphael $ZRaphael $YRalph $ZMargret $YBob $ZMarcie $YSarah $ZMarcie $YRyan
->
-row - the row we are in
-ind - the index in the Results vector this group is at
-*/
 void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<string>> Results, int row, int ind){
-	vector<string> tVarSave = tVar; // saves this vector so that we can delete from it but not really lose info 
+	vector<string> tVarSave = tVar;
 	for (int inc = row; inc < Results.size(); inc++){ // going through each main row
-	vector<string> output; // output vector we will push_back stuff into that we want to print
-		int groupSize = 1; // we want to find the group size so we can iterate through each group without going into the next group
+	vector<string> output;
+		int groupSize = 1;
 		char var = Results[inc][0][1];
 		int it = 1;
 		while(var != Results[inc][it][1]){ // finds the size of the group (X,Y) = a groupsize of 2
@@ -436,35 +522,34 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 		}
 		//going through each smaller row:
 		for(int index = ind; index <= Results[inc].size()-groupSize; index+=groupSize){
+			
 			bool correct = true;
 			// look for things from our group (fist one would be Allen,Margret)
 			for (int compare = 0; compare < group.size(); compare++){ // for each thing the group,
 				correct = true;
-				for(int var = 0; var < tVar.size(); var++){ // for each thing in tVar ($X,$Y)
+				for(int var = 0; var < tVar.size(); var++){
 					if (tVar[var][1] == group[compare][1]){ // if its something we want to print (if its X or Y - Allen is an X
-						stringstream ss; // $XAllen matches with X from tVar, so we add Allen to the output vector
+						stringstream ss;
 						string pushing;
-						char c = tVar[var][1]; // this stuff it just so we can push back a char
+						char c = tVar[var][1];
 						ss << c;
 						ss >> pushing;
 						output.push_back(pushing); 			// add Allen to the output vector
 						output.push_back(": ");
 						output.push_back(group[compare]);
-						tVar.erase(tVar.begin() + var); // erase 'X' from tVar because now we just want to look for the other variables
-						// we will now look for a Y
+						tVar.erase(tVar.begin() + var);
 						
 					}
 				}
-				// for each thing in the group, compare it with whats in Results
 				for(int offset = 0; offset < groupSize; offset++){
-					// if something in Results matches something in out group
 					if(Results[inc][offset+index][1] == group[compare][1]){ // if the variables match
 						// AND if the STRINGS match
 						if(Results[inc][offset+index] == group[compare]){
-							// do nothing i guess?
-						} else { // if they don't match, change the boolean so we remember later
+							// do nothing i guess
+						} else {
 							bool ok = true;
 							for(string s : tVar){ // checks if all the strings for a particular variable match,
+							// so we dont get a group with $ZRalph and $ZSarah
 								if(s[1] == Results[inc][offset+index][1]){
 									ok = false;
 								}
@@ -476,10 +561,8 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 					}
 				}
 				
-			} // if everything went ok, all the strings in that part of Results variable matched;
-			// (in our case this bool would only be true for the section with <$ZMargret,$YBob>)
+			}
 			if(correct){ // if the variables match and have the same strings,
-				// so for this run, tVar is still has Y so we do this next part
 				if(tVar.size()>0){ // we want to add this stuff to group and run AND again on the next row
 					for (int offset = 0; offset < groupSize; offset++){
 						bool ok = true;
@@ -490,35 +573,42 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 						}
 						if(ok){ // if we don't have it, add it to the vector
 							group.push_back(Results[inc][offset+index]);
-						} // now lets check if 
+						}
 						for(int var = 0; var < tVar.size(); var++){ // if its X or Y,
-							if (tVar[var][1] == Results[inc][offset+index][1]){ // this will be true for $YBob
+							if (tVar[var][1] == Results[inc][offset+index][1]){
 								stringstream ss;
 								string pushing;
 								char c=tVar[var][1];
 								ss << c;
-								ss >> pushing;//this is where $YBob will get added
+								ss >> pushing;// pretty sure this is where $YBob will get added
 								output.push_back(pushing); // push it into the output vector
 								output.push_back(": ");	
 								output.push_back(Results[inc][offset+index]);
-								tVar.erase(tVar.begin() + var); // erase $Y from tVar - now its empty
+								tVar.erase(tVar.begin() + var);
 							}
-						} // sincee tVar is now empty, we do the next part, printing
+						}
 						if(tVar.size() == 0){ // if the variable vector is empty (both X and Y have been found)
-							if(output.size()/3 %groupSize == 0){ // also, if the vector is completely full,
+							if(output.size()/3 %groupSize == 0){ //print it out
+											
 								int tracker = 0;
-								for(int s = 0; s < output.size(); s++){ // loop to print correct format
-									if(output[s].size() == 1){ // if the size is 1
-										cout << output[s]; // prints variable
-									}else if(output[s] == ": "){ // if its a ": "
-										cout << output[s]; //print a :
-									} else{ // if its a string
+								for(int s = 0; s < output.size(); s++){
+									outputArray[output.size()+1];//as 1 char space for null is also required
+									strcpy(outputArray, output[s].c_str());
+									//send(sock,outputArray,strlen(outputArray),0); 
+									if(output[s].size() == 1){
+										cout << output[s];
+									}else if(output[s] == ": "){
+										cout << output[s];
+									} else{
+										
 										for(int c = 2; c < output[s].size();c++){
-											cout << output[s][c]; // print it without the $X or $Y
+											cout << output[s][c];
+											
+											
 										}
 										cout << " ";
 									}
-									// if were done printing, newline
+									
 									if(tracker%groupSize == 2){
 										cout << endl;
 									}
@@ -526,10 +616,10 @@ void Manipulator::AND(vector<string> tVar, vector<string> group, vector<vector<s
 								}
 								cout << endl;
 							}
-							output.clear(); // clear the vector so we can use it again
-							tVar = tVarSave; // reset the variables vector for the next group
+							output.clear();
+							tVar = tVarSave; // reset the vector for the next group
 						}
-						int temp = row+1;// increment to the next row
+						int temp = row+1;
 						AND(tVar, group, Results, temp,ind); // continue searching, recursively
 						
 					}
@@ -888,6 +978,7 @@ void Manipulator::clean(){
 		it->second->andVars.clear();
 		it->second->Results.clear();
 	}
+	resultsInString = "";
 	infRules.erase(infRules.begin(), infRules.end());
 	infRules.clear();
 	printImmediately = true;
